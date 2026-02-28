@@ -1,7 +1,17 @@
+import Image from "next/image";
+import { IconMail, IconPhone, IconLinkedIn, IconMapPin } from "@/components/icons";
+
 const specialisms = [
   "Secure by Design", "Threat & Vulnerability Mgmt", "Risk Management",
   "MoD Security Policy", "Security Architecture", "Info Asset Assurance",
   "Stakeholder Engagement", "Line Management", "Critical Infrastructure",
+];
+
+const contactRows = [
+  { label: "Email",    value: "marcwhitham@outlook.com", href: "mailto:marcwhitham@outlook.com", Icon: IconMail    },
+  { label: "Phone",    value: "07917 197537",            href: "tel:07917197537",               Icon: IconPhone   },
+  { label: "LinkedIn", value: "Marc Whitham",            href: "#",                             Icon: IconLinkedIn},
+  { label: "Location", value: "Hampshire, PO12",         href: undefined,                       Icon: IconMapPin  },
 ];
 
 export function About() {
@@ -13,8 +23,30 @@ export function About() {
           Professional Profile
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-4 text-sm leading-relaxed" style={{ color: "#64748b" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+          {/* Image column */}
+          <div className="hidden lg:block">
+            <div className="rounded-xl overflow-hidden border sticky top-24" style={{ borderColor: "#1a2540" }}>
+              <Image
+                src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=560&q=80"
+                alt="Cybersecurity network visualization"
+                width={560}
+                height={420}
+                className="w-full object-cover"
+                style={{ filter: "brightness(0.6) saturate(0.65)" }}
+              />
+              <div className="p-4 border-t" style={{ borderColor: "#1a2540", background: "#101625" }}>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse flex-shrink-0" />
+                  <span className="font-mono text-xs font-semibold" style={{ color: "#10b981" }}>Available Q2 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="space-y-4 text-sm leading-relaxed" style={{ color: "#64748b" }}>
             <p>
               I am a Principal Security Consultant with over{" "}
               <strong style={{ color: "#f1f5f9" }}>27 years of experience in the Ministry of Defence</strong>,
@@ -40,21 +72,17 @@ export function About() {
             </p>
           </div>
 
+          {/* Cards */}
           <div className="space-y-4">
             <div className="rounded-xl border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Contact</h3>
-              <div className="space-y-2.5">
-                {[
-                  { label: "Email",    value: "marcwhitham@outlook.com", href: "mailto:marcwhitham@outlook.com" },
-                  { label: "Phone",    value: "07917 197537",            href: "tel:07917197537" },
-                  { label: "LinkedIn", value: "Marc Whitham",            href: "#" },
-                  { label: "Location", value: "Hampshire, PO12",         href: undefined },
-                ].map((r) => (
-                  <div key={r.label} className="flex gap-3 items-baseline text-sm">
-                    <span className="font-mono text-xs min-w-[54px]" style={{ color: "#2d3f5a" }}>{r.label}</span>
-                    {r.href
-                      ? <a href={r.href} style={{ color: "#3b82f6" }}>{r.value}</a>
-                      : <span style={{ color: "#64748b" }}>{r.value}</span>}
+              <div className="space-y-3">
+                {contactRows.map(({ label, value, href, Icon }) => (
+                  <div key={label} className="flex items-center gap-3 text-sm">
+                    <Icon size={14} className="flex-shrink-0" style={{ color: "#2d3f5a" } as React.CSSProperties} />
+                    {href
+                      ? <a href={href} style={{ color: "#3b82f6" }}>{value}</a>
+                      : <span style={{ color: "#64748b" }}>{value}</span>}
                   </div>
                 ))}
               </div>
@@ -72,6 +100,7 @@ export function About() {
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const skillBlocks = [
   {
     title: "Security Architecture & Design",
@@ -34,6 +36,24 @@ const frameworks = [
   "SQEP Workforce Management", "Defence CMI",
 ];
 
+const imageStrip = [
+  {
+    src: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=480&q=70",
+    alt: "Code and security matrix",
+    caption: "Defence-grade code assurance",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=480&q=70",
+    alt: "Network infrastructure",
+    caption: "15+ RN networks secured",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=480&q=70",
+    alt: "Cyber security operations",
+    caption: "Central SOC leadership",
+  },
+];
+
 export function Skills() {
   return (
     <section id="skills" className="py-24" style={{ background: "#060810" }}>
@@ -55,10 +75,7 @@ export function Skills() {
                       <span className="font-mono text-xs" style={{ color: "#3b82f6" }}>{b.pct}%</span>
                     </div>
                     <div className="h-1 rounded-full overflow-hidden" style={{ background: "#162030" }}>
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${b.pct}%`, background: "#3b82f6" }}
-                      />
+                      <div className="h-full rounded-full" style={{ width: `${b.pct}%`, background: "#3b82f6" }} />
                     </div>
                   </div>
                 ))}
@@ -67,8 +84,8 @@ export function Skills() {
           ))}
         </div>
 
-        {/* Frameworks bento */}
-        <div className="rounded-xl border p-6" style={{ background: "#101625", borderColor: "#1a2540" }}>
+        {/* Frameworks */}
+        <div className="rounded-xl border p-6 mb-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
           <h3 className="font-mono font-semibold text-sm mb-4" style={{ color: "#f1f5f9" }}>Standards &amp; Frameworks</h3>
           <div className="flex flex-wrap gap-2">
             {frameworks.map((f) => (
@@ -79,6 +96,28 @@ export function Skills() {
             ))}
           </div>
         </div>
+
+        {/* Image strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {imageStrip.map(({ src, alt, caption }) => (
+            <div key={caption} className="relative rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>
+              <Image
+                src={src}
+                alt={alt}
+                width={480}
+                height={270}
+                className="w-full object-cover"
+                style={{ aspectRatio: "16/9", filter: "brightness(0.5) saturate(0.6)" }}
+              />
+              <div className="absolute inset-0 flex items-end">
+                <p className="w-full px-3 py-2 font-mono text-xs" style={{ color: "#64748b", background: "rgba(6,8,16,0.6)" }}>
+                  // {caption}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
