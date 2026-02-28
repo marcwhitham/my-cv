@@ -156,15 +156,18 @@ function delay(ms: number): Promise<void> {
 }
 
 export function Hero() {
+  const leftColRef  = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+
   return (
     <section
       className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)] overflow-hidden"
     >
       {/* Particle background */}
-      <ParticleCanvas />
+      <ParticleCanvas obstacles={[leftColRef, rightColRef]} />
 
       {/* Left */}
-      <div className="relative z-10 flex flex-col gap-6">
+      <div ref={leftColRef} className="relative z-10 flex flex-col gap-6">
         <Image src="/logo.svg" alt="MW" width={56} height={56} className="mb-2" />
 
         <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "#3b82f6" }}>
@@ -221,7 +224,7 @@ export function Hero() {
       </div>
 
       {/* Right */}
-      <div className="relative z-10 hidden lg:flex flex-col gap-4">
+      <div ref={rightColRef} className="relative z-10 hidden lg:flex flex-col gap-4">
 
         {/* Photo */}
         <div className="relative rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>

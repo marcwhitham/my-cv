@@ -2,7 +2,8 @@
 import { useEffect, useRef } from "react";
 
 // ─── types ───────────────────────────────────────────────────────────────────
-type IconType = "shield" | "lock" | "server" | "hub" | "eye" | "chip";
+type IconType   = "shield" | "lock" | "server" | "hub" | "eye" | "chip";
+type ObstacleRef = { current: HTMLElement | null };
 
 interface Node {
   x: number; y: number;
@@ -114,8 +115,50 @@ function drawIcon(ctx: CanvasRenderingContext2D, icon: IconType, cx: number, cy:
   ctx.globalAlpha = 1;
 }
 
+// ─── circle-vs-AABB collision ─────────────────────────────────────────────────
+// elRect and cRect are both in viewport coords; cRect is the canvas element rect.
+function collideRect(nd: Node, elRect: DOMRect, cRect: DOMRect) {
+  const PAD    = 6; // soft buffer so nodes don't press flush against the edge
+  const left   = elRect.left   - cRect.left - PAD;
+  const top    = elRect.top    - cRect.top  - PAD;
+  const right  = elRect.right  - cRect.left + PAD;
+  const bottom = elRect.bottom - cRect.top  + PAD;
+
+  // quick reject
+  if (nd.x + NODE_R < left || nd.x - NODE_R > right ||
+      nd.y + NODE_R < top  || nd.y - NODE_R > bottom) return;
+
+  // closest point on rect to circle centre
+  const cx = Math.max(left, Math.min(nd.x, right));
+  const cy = Math.max(top,  Math.min(nd.y, bottom));
+  const dx = nd.x - cx;
+  const dy = nd.y - cy;
+  const distSq = dx * dx + dy * dy;
+
+  if (distSq >= NODE_R * NODE_R) return;
+
+  if (distSq < 1e-6) {
+    // centre is inside rect — push out through nearest edge
+    const dl = nd.x - left, dr = right - nd.x, dt = nd.y - top, db = bottom - nd.y;
+    const m = Math.min(dl, dr, dt, db);
+    if      (m === dl) { nd.x = left   - NODE_R; nd.vx = -Math.abs(nd.vx); }
+    else if (m === dr) { nd.x = right  + NODE_R; nd.vx =  Math.abs(nd.vx); }
+    else if (m === dt) { nd.y = top    - NODE_R; nd.vy = -Math.abs(nd.vy); }
+    else               { nd.y = bottom + NODE_R; nd.vy =  Math.abs(nd.vy); }
+    return;
+  }
+
+  // push node out along collision normal and reflect velocity
+  const dist = Math.sqrt(distSq);
+  const nx = dx / dist, ny = dy / dist;
+  nd.x += nx * (NODE_R - dist);
+  nd.y += ny * (NODE_R - dist);
+  const dot = nd.vx * nx + nd.vy * ny;
+  if (dot < 0) { nd.vx -= 2 * dot * nx; nd.vy -= 2 * dot * ny; }
+}
+
 // ─── component ────────────────────────────────────────────────────────────────
-export function ParticleCanvas() {
+export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -157,12 +200,21 @@ export function ParticleCanvas() {
       ctx.clearRect(0, 0, w, h);
 
       // ── update nodes ──────────────────────────────────────────────────────
+      // Collect obstacle rects once per frame (viewport coords)
+      const cRect         = canvas.getBoundingClientRect();
+      const obstacleRects = obstacles
+        .map(r => r.current?.getBoundingClientRect())
+        .filter(Boolean) as DOMRect[];
+
       for (const nd of nodes) {
         nd.x += nd.vx; nd.y += nd.vy;
         if (nd.x < NODE_R + 4)     { nd.x = NODE_R + 4;     nd.vx =  Math.abs(nd.vx); }
         if (nd.x > w - NODE_R - 4) { nd.x = w - NODE_R - 4; nd.vx = -Math.abs(nd.vx); }
         if (nd.y < NODE_R + 4)     { nd.y = NODE_R + 4;     nd.vy =  Math.abs(nd.vy); }
         if (nd.y > h - NODE_R - 4) { nd.y = h - NODE_R - 4; nd.vy = -Math.abs(nd.vy); }
+
+        // DOM element collision
+        for (const r of obstacleRects) collideRect(nd, r, cRect);
 
         if (now >= nd.nextPulse) {
           nd.pulseR = NODE_R; nd.pulseA = 0.45;
