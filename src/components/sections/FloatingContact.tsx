@@ -1,0 +1,46 @@
+"use client";
+import { useEffect, useState } from "react";
+
+export function FloatingContact() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setVisible(window.scrollY >= 300);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: "24px",
+        right: "24px",
+        zIndex: 50,
+        transition: "opacity 0.3s, transform 0.3s",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        pointerEvents: visible ? "auto" : "none",
+      }}
+    >
+      <a href="#contact">
+        <button
+          className="font-mono font-bold text-sm px-5 py-3 rounded-full"
+          style={{
+            background: "#f59e0b",
+            color: "#0b0f1a",
+          }}
+        >
+          💬 Let&apos;s Talk
+        </button>
+      </a>
+    </div>
+  );
+}

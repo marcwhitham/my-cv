@@ -6,6 +6,9 @@ import { Skills } from "@/components/sections/Skills";
 import { Qualifications } from "@/components/sections/Qualifications";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
+import { ImpactBand } from "@/components/sections/ImpactBand";
+import { CertMarquee } from "@/components/sections/CertMarquee";
+import { FloatingContact } from "@/components/sections/FloatingContact";
 
 export default function Home() {
   return (
@@ -13,11 +16,14 @@ export default function Home() {
       <Navbar />
       <Hero />
       <About />
+      <ImpactBand />
       <Experience />
       <Skills />
+      <CertMarquee />
       <Qualifications />
       <Contact />
       <Footer />
+      <FloatingContact />
     </main>
   );
 }
