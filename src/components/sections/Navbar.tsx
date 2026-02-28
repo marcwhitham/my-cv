@@ -1,0 +1,73 @@
+"use client";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+
+const links = [
+  { href: "#about", label: "About" },
+  { href: "#experience", label: "Experience" },
+  { href: "#skills", label: "Skills" },
+  { href: "#qualifications", label: "Qualifications" },
+  { href: "#contact", label: "Contact" },
+];
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  return (
+    <>
+      {/* Banner */}
+      <div className="w-full text-center py-2 px-4 text-sm flex items-center justify-center gap-4 flex-wrap"
+        style={{ background: "#0d1629", borderBottom: "1px solid #1a2540" }}>
+        <span style={{ color: "rgba(255,255,255,0.75)" }}>
+          Available for Defence &amp; MoD security engagements from Q2 2026
+        </span>
+        <a href="#contact" className="text-white font-semibold text-sm" style={{ borderBottom: "1px solid rgba(255,255,255,0.4)" }}>
+          Get in touch →
+        </a>
+      </div>
+
+      {/* Nav */}
+      <nav
+        className="sticky top-0 z-50 w-full"
+        style={{
+          background: scrolled ? "rgba(6,8,16,0.95)" : "rgba(6,8,16,0.8)",
+          backdropFilter: "blur(14px)",
+          borderBottom: "1px solid #1a2540",
+          transition: "background 0.2s",
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-8">
+          <a href="#" className="mr-auto" style={{ opacity: 1 }}>
+            <Image src="/logo.svg" alt="MW" width={72} height={32} priority />
+          </a>
+          <ul className="hidden md:flex items-center gap-7 list-none">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} className="text-sm font-medium transition-colors"
+                  style={{ color: "#64748b" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f1f5f9")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "#64748b")}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="/marc-whitham-cv.pdf"
+            download
+            className="text-sm font-bold px-5 py-2 rounded-full transition-transform hover:-translate-y-px"
+            style={{ background: "#f59e0b", color: "#000" }}
+          >
+            Download CV
+          </a>
+        </div>
+      </nav>
+    </>
+  );
+}
