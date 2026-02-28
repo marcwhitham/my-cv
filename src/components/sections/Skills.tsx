@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 const skillBlocks = [
   {
@@ -54,6 +58,28 @@ const imageStrip = [
   },
 ];
 
+function SkillBar({ label, pct }: { label: string; pct: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <div ref={ref}>
+      <div className="flex justify-between mb-1.5">
+        <span className="text-xs" style={{ color: "#64748b" }}>{label}</span>
+        <span className="font-mono text-xs" style={{ color: "#3b82f6" }}>{pct}%</span>
+      </div>
+      <div className="h-1 rounded-full overflow-hidden" style={{ background: "#162030" }}>
+        <motion.div
+          className="h-full rounded-full"
+          style={{ background: "#3b82f6" }}
+          initial={{ width: "0%" }}
+          animate={{ width: isInView ? `${pct}%` : "0%" }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function Skills() {
   return (
     <section id="skills" className="py-24" style={{ background: "#060810" }}>
@@ -64,28 +90,35 @@ export function Skills() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          {skillBlocks.map((block) => (
-            <div key={block.title} className="rounded-xl border p-6" style={{ background: "#101625", borderColor: "#1a2540" }}>
+          {skillBlocks.map((block, index) => (
+            <motion.div
+              key={block.title}
+              className="rounded-xl border p-6"
+              style={{ background: "#101625", borderColor: "#1a2540" }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: index * 0.1 }}
+            >
               <h3 className="font-mono font-semibold text-sm mb-5" style={{ color: "#f1f5f9" }}>{block.title}</h3>
               <div className="space-y-3.5">
                 {block.bars.map((b) => (
-                  <div key={b.label}>
-                    <div className="flex justify-between mb-1.5">
-                      <span className="text-xs" style={{ color: "#64748b" }}>{b.label}</span>
-                      <span className="font-mono text-xs" style={{ color: "#3b82f6" }}>{b.pct}%</span>
-                    </div>
-                    <div className="h-1 rounded-full overflow-hidden" style={{ background: "#162030" }}>
-                      <div className="h-full rounded-full" style={{ width: `${b.pct}%`, background: "#3b82f6" }} />
-                    </div>
-                  </div>
+                  <SkillBar key={b.label} label={b.label} pct={b.pct} />
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Frameworks */}
-        <div className="rounded-xl border p-6 mb-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+        <motion.div
+          className="rounded-xl border p-6 mb-5"
+          style={{ background: "#101625", borderColor: "#1a2540" }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.45 }}
+        >
           <h3 className="font-mono font-semibold text-sm mb-4" style={{ color: "#f1f5f9" }}>Standards &amp; Frameworks</h3>
           <div className="flex flex-wrap gap-2">
             {frameworks.map((f) => (
@@ -95,12 +128,20 @@ export function Skills() {
               </span>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Image strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {imageStrip.map(({ src, alt, caption }) => (
-            <div key={caption} className="relative rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>
+          {imageStrip.map(({ src, alt, caption }, index) => (
+            <motion.div
+              key={caption}
+              className="relative rounded-xl overflow-hidden border"
+              style={{ borderColor: "#1a2540" }}
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.12 }}
+            >
               <Image
                 src={src}
                 alt={alt}
@@ -114,7 +155,7 @@ export function Skills() {
                   // {caption}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
