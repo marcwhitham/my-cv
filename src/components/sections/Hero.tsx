@@ -18,8 +18,10 @@ const TERMINAL_LINES = [
   { prompt: "$ availability --check", output: "> Available Q2 2026 · SC/DV environments ✓" },
 ];
 
-const CHAR_DELAY = 150;
 const LINE_GAP = 400;
+const wordDelay  = () => 35 + Math.random() * 30;   // 35–65 ms per char (blue)
+const wordPause  = () => 160 + Math.random() * 190; // 160–350 ms between words (blue)
+const OUTPUT_MS  = 18;                               // ms per char (green, fast)
 
 interface TerminalLine {
   text: string;
@@ -35,56 +37,56 @@ function TerminalBlock() {
   useEffect(() => {
     let cancelled = false;
 
+    function pushOrUpdate(prev: TerminalLine[], text: string, isPrompt: boolean): TerminalLine[] {
+      const next = [...prev];
+      const last = next.length - 1;
+      if (last >= 0 && !next[last].complete && next[last].isPrompt === isPrompt) {
+        next[last] = { ...next[last], text };
+      } else {
+        next.push({ text, isPrompt, complete: false });
+      }
+      return next;
+    }
+
+    function markComplete(prev: TerminalLine[]): TerminalLine[] {
+      const next = [...prev];
+      next[next.length - 1] = { ...next[next.length - 1], complete: true };
+      return next;
+    }
+
     async function typeAll() {
       for (const entry of TERMINAL_LINES) {
         if (cancelled) return;
 
-        // Type the prompt line
-        for (let i = 1; i <= entry.prompt.length; i++) {
-          if (cancelled) return;
-          await delay(CHAR_DELAY);
-          setLines((prev) => {
-            const next = [...prev];
-            const lastIdx = next.length - 1;
-            if (lastIdx >= 0 && !next[lastIdx].complete && next[lastIdx].isPrompt) {
-              next[lastIdx] = { ...next[lastIdx], text: entry.prompt.slice(0, i) };
-            } else {
-              next.push({ text: entry.prompt.slice(0, i), isPrompt: true, complete: false });
-            }
-            return next;
-          });
+        // Blue prompt — word by word: type chars fast, pause between words
+        const words = entry.prompt.split(" ");
+        let built = "";
+        for (let w = 0; w < words.length; w++) {
+          for (const ch of words[w]) {
+            if (cancelled) return;
+            await delay(wordDelay());
+            built += ch;
+            setLines(prev => pushOrUpdate(prev, built, true));
+          }
+          if (w < words.length - 1) {
+            if (cancelled) return;
+            await delay(wordPause());
+            built += " ";
+            setLines(prev => pushOrUpdate(prev, built, true));
+          }
         }
-        // Mark prompt complete
-        setLines((prev) => {
-          const next = [...prev];
-          next[next.length - 1] = { ...next[next.length - 1], complete: true };
-          return next;
-        });
+        setLines(markComplete);
 
         await delay(LINE_GAP);
         if (cancelled) return;
 
-        // Type the output line
+        // Green output — fast, consistent
         for (let i = 1; i <= entry.output.length; i++) {
           if (cancelled) return;
-          await delay(CHAR_DELAY / 3);
-          setLines((prev) => {
-            const next = [...prev];
-            const lastIdx = next.length - 1;
-            if (lastIdx >= 0 && !next[lastIdx].complete && !next[lastIdx].isPrompt) {
-              next[lastIdx] = { ...next[lastIdx], text: entry.output.slice(0, i) };
-            } else {
-              next.push({ text: entry.output.slice(0, i), isPrompt: false, complete: false });
-            }
-            return next;
-          });
+          await delay(OUTPUT_MS);
+          setLines(prev => pushOrUpdate(prev, entry.output.slice(0, i), false));
         }
-        // Mark output complete
-        setLines((prev) => {
-          const next = [...prev];
-          next[next.length - 1] = { ...next[next.length - 1], complete: true };
-          return next;
-        });
+        setLines(markComplete);
 
         await delay(LINE_GAP);
       }
