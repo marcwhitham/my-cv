@@ -15,11 +15,11 @@ export default function Home() {
     <main style={{ background: "#060810", minHeight: "100vh" }}>
       <Navbar />
       <Hero />
+      <CertMarquee />
       <About />
       <ImpactBand />
       <Experience />
       <Skills />
-      <CertMarquee />
       <Qualifications />
       <Contact />
       <Footer />

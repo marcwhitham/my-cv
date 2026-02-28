@@ -120,8 +120,9 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
             ],
           }}
           transition={{
-            duration: 2.5,
+            duration: 1.25,
             repeat: Infinity,
+            repeatType: "reverse",
             ease: "easeInOut",
           }}
         />
