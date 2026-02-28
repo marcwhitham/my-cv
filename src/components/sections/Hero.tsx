@@ -156,15 +156,16 @@ function delay(ms: number): Promise<void> {
 }
 
 export function Hero() {
-  const leftColRef  = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
+  const leftColRef   = useRef<HTMLDivElement>(null);
+  const rightColRef  = useRef<HTMLDivElement>(null);
+  const terminalRef  = useRef<HTMLDivElement>(null);
 
   return (
     <section
       className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)] overflow-hidden"
     >
       {/* Particle background */}
-      <ParticleCanvas obstacles={[leftColRef, rightColRef]} />
+      <ParticleCanvas obstacles={[leftColRef, rightColRef, terminalRef]} />
 
       {/* Left */}
       <div ref={leftColRef} className="relative z-10 flex flex-col gap-6">
@@ -181,7 +182,7 @@ export function Hero() {
         </h1>
 
         {/* Terminal block replacing TypingAnimation */}
-        <div className="max-w-md">
+        <div ref={terminalRef} className="max-w-md">
           <TerminalBlock />
         </div>
 

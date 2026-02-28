@@ -1,160 +1,138 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-// ─── types ───────────────────────────────────────────────────────────────────
+// ─── types ────────────────────────────────────────────────────────────────────
 type IconType   = "shield" | "lock" | "server" | "hub" | "eye" | "chip";
-type ObstacleRef = { current: HTMLElement | null };
+export type ObstacleRef = { current: HTMLElement | null };
 
 interface Node {
-  x: number; y: number;
-  vx: number; vy: number;
+  x: number; y: number; vx: number; vy: number;
   icon: IconType;
+  a: number;           // alpha 0→1 fade-in
   pulseR: number; pulseA: number; nextPulse: number;
 }
-
 interface Packet { ai: number; bi: number; t: number; }
 
 // ─── constants ────────────────────────────────────────────────────────────────
-const NODE_R       = 15;          // circle radius around icon
-const MAX_DIST     = 220;         // connection threshold
-const PACKET_SPEED = 0.0038;      // fraction of edge per frame
-const BLUE         = "#3b82f6";
-const BLUE_BRIGHT  = "rgba(147,197,253,0.92)"; // lighter blue for packets
-const BLUE_GLOW    = "rgba(59,130,246,0.32)";
-const BG_NODE      = "rgba(12,19,34,0.52)";    // semi-transparent so text shows through
-const ICONS: IconType[] = [
-  "shield", "lock", "server", "hub", "eye", "chip", "shield", "lock", "eye",
-];
+const NODE_R    = 15;
+const MAX_DIST  = 220;
+const PKT_SPEED = 0.0038;
+const REPEL_R   = 72;     // nodes push apart below this distance
+const REPEL_STR = 0.003;
+const MAX_SPEED = 0.46;
+const C_BLUE    = "#3b82f6";
+const C_GLOW    = "rgba(59,130,246,0.30)";
+const C_BRIGHT  = "rgba(147,197,253,0.92)";
+const C_BG      = "rgba(12,19,34,0.52)";
+const ICONS: IconType[] = ["shield","lock","server","hub","eye","chip","shield","lock","eye"];
 
-// ─── icon renderer ────────────────────────────────────────────────────────────
-// All icons are designed for a ±8 logical-pixel box centered on (cx, cy).
+// ─── icon drawing ─────────────────────────────────────────────────────────────
+// Icons designed for a ±8 px box around (cx, cy). Caller sets globalAlpha.
 function drawIcon(ctx: CanvasRenderingContext2D, icon: IconType, cx: number, cy: number) {
-  ctx.strokeStyle = BLUE;
-  ctx.fillStyle   = BLUE;
-  ctx.lineWidth   = 1.4;
-  ctx.lineCap     = "round";
-  ctx.lineJoin    = "round";
-  ctx.globalAlpha = 0.72;
-
+  ctx.strokeStyle = C_BLUE; ctx.fillStyle = C_BLUE;
+  ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.lineJoin = "round";
   switch (icon) {
     case "shield":
       ctx.beginPath();
-      ctx.moveTo(cx, cy - 7);
-      ctx.lineTo(cx - 5, cy - 3.5);
-      ctx.lineTo(cx - 5, cy + 1.5);
-      ctx.quadraticCurveTo(cx, cy + 8, cx, cy + 8);
-      ctx.quadraticCurveTo(cx, cy + 8, cx + 5, cy + 1.5);
-      ctx.lineTo(cx + 5, cy - 3.5);
-      ctx.closePath();
-      ctx.stroke();
-      // checkmark inside
-      ctx.beginPath();
-      ctx.moveTo(cx - 2.5, cy + 1);
-      ctx.lineTo(cx - 0.5, cy + 3.5);
-      ctx.lineTo(cx + 3, cy - 1.5);
-      ctx.stroke();
+      ctx.moveTo(cx, cy-7); ctx.lineTo(cx-5, cy-3.5); ctx.lineTo(cx-5, cy+1.5);
+      ctx.quadraticCurveTo(cx, cy+8, cx, cy+8);
+      ctx.quadraticCurveTo(cx, cy+8, cx+5, cy+1.5); ctx.lineTo(cx+5, cy-3.5);
+      ctx.closePath(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-2.5,cy+1); ctx.lineTo(cx-0.5,cy+3.5); ctx.lineTo(cx+3,cy-1.5); ctx.stroke();
       break;
-
     case "lock":
-      // shackle arc
-      ctx.beginPath();
-      ctx.arc(cx, cy - 2.5, 3.5, Math.PI, 0);
-      ctx.stroke();
-      // body
-      ctx.beginPath();
-      ctx.rect(cx - 4.5, cy - 0.5, 9, 7);
-      ctx.stroke();
-      // keyhole dot
-      ctx.beginPath();
-      ctx.arc(cx, cy + 3, 1.5, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy-2.5, 3.5, Math.PI, 0); ctx.stroke();
+      ctx.beginPath(); ctx.rect(cx-4.5, cy-0.5, 9, 7); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy+3, 1.5, 0, Math.PI*2); ctx.fill();
       break;
-
     case "server":
-      ctx.beginPath(); ctx.rect(cx - 5.5, cy - 7, 11, 5); ctx.stroke();
-      ctx.beginPath(); ctx.rect(cx - 5.5, cy + 0.5, 11, 5); ctx.stroke();
-      ctx.beginPath(); ctx.arc(cx - 2.5, cy - 4.5, 1, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(cx - 2.5, cy + 3, 1, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.rect(cx-5.5, cy-7, 11, 5); ctx.stroke();
+      ctx.beginPath(); ctx.rect(cx-5.5, cy+0.5, 11, 5); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx-2.5, cy-4.5, 1, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx-2.5, cy+3, 1, 0, Math.PI*2); ctx.fill();
       break;
-
     case "hub": {
-      ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2); ctx.fill();
-      const spokes = 4;
-      for (let s = 0; s < spokes; s++) {
-        const a = (s / spokes) * Math.PI * 2;
-        ctx.beginPath();
-        ctx.moveTo(cx + 2.5 * Math.cos(a), cy + 2.5 * Math.sin(a));
-        ctx.lineTo(cx + 6.2 * Math.cos(a), cy + 6.2 * Math.sin(a));
-        ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx + 7 * Math.cos(a), cy + 7 * Math.sin(a), 1.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI*2); ctx.fill();
+      for (let s = 0; s < 4; s++) {
+        const a = (s/4)*Math.PI*2;
+        ctx.beginPath(); ctx.moveTo(cx+2.5*Math.cos(a), cy+2.5*Math.sin(a));
+        ctx.lineTo(cx+6.2*Math.cos(a), cy+6.2*Math.sin(a)); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx+7*Math.cos(a), cy+7*Math.sin(a), 1.2, 0, Math.PI*2); ctx.fill();
       }
       break;
     }
-
     case "eye":
       ctx.beginPath();
-      ctx.moveTo(cx - 7, cy);
-      ctx.bezierCurveTo(cx - 3.5, cy - 5, cx + 3.5, cy - 5, cx + 7, cy);
-      ctx.bezierCurveTo(cx + 3.5, cy + 5, cx - 3.5, cy + 5, cx - 7, cy);
+      ctx.moveTo(cx-7, cy);
+      ctx.bezierCurveTo(cx-3.5,cy-5, cx+3.5,cy-5, cx+7,cy);
+      ctx.bezierCurveTo(cx+3.5,cy+5, cx-3.5,cy+5, cx-7,cy);
       ctx.stroke();
-      ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI*2); ctx.fill();
       break;
-
     case "chip":
-      ctx.beginPath(); ctx.rect(cx - 4.5, cy - 4.5, 9, 9); ctx.stroke();
-      // pins (3 per side)
+      ctx.beginPath(); ctx.rect(cx-4.5, cy-4.5, 9, 9); ctx.stroke();
       for (let p = -1; p <= 1; p++) {
-        ctx.beginPath(); ctx.moveTo(cx + p * 3, cy - 4.5); ctx.lineTo(cx + p * 3, cy - 7); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + p * 3, cy + 4.5); ctx.lineTo(cx + p * 3, cy + 7); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx - 4.5, cy + p * 3); ctx.lineTo(cx - 7, cy + p * 3); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + 4.5, cy + p * 3); ctx.lineTo(cx + 7, cy + p * 3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+p*3, cy-4.5); ctx.lineTo(cx+p*3, cy-7); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+p*3, cy+4.5); ctx.lineTo(cx+p*3, cy+7); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx-4.5, cy+p*3); ctx.lineTo(cx-7,   cy+p*3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+4.5, cy+p*3); ctx.lineTo(cx+7,   cy+p*3); ctx.stroke();
       }
       break;
   }
-
-  ctx.globalAlpha = 1;
 }
 
-// ─── circle-vs-AABB collision ─────────────────────────────────────────────────
-// elRect and cRect are both in viewport coords; cRect is the canvas element rect.
-function collideRect(nd: Node, elRect: DOMRect, cRect: DOMRect) {
-  const PAD    = 6; // soft buffer so nodes don't press flush against the edge
-  const left   = elRect.left   - cRect.left - PAD;
-  const top    = elRect.top    - cRect.top  - PAD;
-  const right  = elRect.right  - cRect.left + PAD;
-  const bottom = elRect.bottom - cRect.top  + PAD;
+// ─── geometry helpers ─────────────────────────────────────────────────────────
+// Convert viewport DOMRect to canvas-local coords with padding.
+function toLocal(r: DOMRect, cr: DOMRect, pad: number) {
+  return {
+    l: r.left - cr.left - pad, t: r.top - cr.top - pad,
+    ri: r.right - cr.left + pad, b: r.bottom - cr.top + pad,
+  };
+}
 
-  // quick reject
-  if (nd.x + NODE_R < left || nd.x - NODE_R > right ||
-      nd.y + NODE_R < top  || nd.y - NODE_R > bottom) return;
+// Circle-vs-AABB: resolve penetration and reflect velocity.
+function collideRect(nd: Node, r: DOMRect, cr: DOMRect) {
+  const { l, t, ri, b } = toLocal(r, cr, 6);
+  if (nd.x + NODE_R < l || nd.x - NODE_R > ri || nd.y + NODE_R < t || nd.y - NODE_R > b) return;
 
-  // closest point on rect to circle centre
-  const cx = Math.max(left, Math.min(nd.x, right));
-  const cy = Math.max(top,  Math.min(nd.y, bottom));
-  const dx = nd.x - cx;
-  const dy = nd.y - cy;
-  const distSq = dx * dx + dy * dy;
+  const cx = Math.max(l, Math.min(nd.x, ri));
+  const cy = Math.max(t, Math.min(nd.y, b));
+  const dx = nd.x - cx, dy = nd.y - cy;
+  const dSq = dx*dx + dy*dy;
+  if (dSq >= NODE_R * NODE_R) return;
 
-  if (distSq >= NODE_R * NODE_R) return;
-
-  if (distSq < 1e-6) {
-    // centre is inside rect — push out through nearest edge
-    const dl = nd.x - left, dr = right - nd.x, dt = nd.y - top, db = bottom - nd.y;
-    const m = Math.min(dl, dr, dt, db);
-    if      (m === dl) { nd.x = left   - NODE_R; nd.vx = -Math.abs(nd.vx); }
-    else if (m === dr) { nd.x = right  + NODE_R; nd.vx =  Math.abs(nd.vx); }
-    else if (m === dt) { nd.y = top    - NODE_R; nd.vy = -Math.abs(nd.vy); }
-    else               { nd.y = bottom + NODE_R; nd.vy =  Math.abs(nd.vy); }
+  if (dSq < 1e-6) {
+    // centre inside rect — eject through nearest edge
+    const [dl, dr, dt2, db] = [nd.x-l, ri-nd.x, nd.y-t, b-nd.y];
+    const m = Math.min(dl, dr, dt2, db);
+    if      (m === dl)  { nd.x = l-NODE_R;  nd.vx = -Math.abs(nd.vx); }
+    else if (m === dr)  { nd.x = ri+NODE_R; nd.vx =  Math.abs(nd.vx); }
+    else if (m === dt2) { nd.y = t-NODE_R;  nd.vy = -Math.abs(nd.vy); }
+    else                { nd.y = b+NODE_R;  nd.vy =  Math.abs(nd.vy); }
     return;
   }
 
-  // push node out along collision normal and reflect velocity
-  const dist = Math.sqrt(distSq);
-  const nx = dx / dist, ny = dy / dist;
-  nd.x += nx * (NODE_R - dist);
-  nd.y += ny * (NODE_R - dist);
-  const dot = nd.vx * nx + nd.vy * ny;
-  if (dot < 0) { nd.vx -= 2 * dot * nx; nd.vy -= 2 * dot * ny; }
+  const d = Math.sqrt(dSq), nx = dx/d, ny = dy/d;
+  nd.x += nx*(NODE_R-d); nd.y += ny*(NODE_R-d);
+  const dot = nd.vx*nx + nd.vy*ny;
+  if (dot < 0) { nd.vx -= 2*dot*nx; nd.vy -= 2*dot*ny; }
+}
+
+// Liang-Barsky segment clip: returns true if segment passes through rect.
+function segBlocked(x1: number, y1: number, x2: number, y2: number, r: DOMRect, cr: DOMRect): boolean {
+  const { l, t, ri, b } = toLocal(r, cr, 2);
+  const dx = x2-x1, dy = y2-y1;
+  let t0 = 0, t1 = 1;
+  const ps = [-dx, dx, -dy, dy];
+  const qs = [x1-l, ri-x1, y1-t, b-y1];
+  for (let i = 0; i < 4; i++) {
+    const p = ps[i], q = qs[i];
+    if (Math.abs(p) < 1e-10) { if (q < 0) return false; continue; }
+    const ratio = q / p;
+    if (p < 0) { if (ratio > t1) return false; if (ratio > t0) t0 = ratio; }
+    else        { if (ratio < t0) return false; if (ratio < t1) t1 = ratio; }
+  }
+  return t0 <= t1;
 }
 
 // ─── component ────────────────────────────────────────────────────────────────
@@ -164,12 +142,24 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx    = canvas.getContext("2d")!;
-    let w = 0, h = 0, dpr = 1, raf = 0;
+    let w = 0, h = 0, dpr = 1, raf = 0, frameN = 0;
     let nodes: Node[] | null = null;
     const packets: Packet[]  = [];
     const liveConns          = new Set<string>();
 
-    // ── resize: reset transform each time so scale doesn't accumulate ──────
+    // Obstacle rects cached and refreshed via ResizeObserver + dirty flag.
+    // Stored as viewport DOMRects; canvas rect is always read fresh each frame
+    // so canvas-local positions stay correct even when the page scrolls.
+    let cachedRects: DOMRect[] = [];
+    let rectsDirty = true;
+
+    function refreshRects() {
+      cachedRects = obstacles
+        .map(ob => ob.current?.getBoundingClientRect())
+        .filter((r): r is DOMRect => !!r);
+      rectsDirty = false;
+    }
+
     function resize() {
       dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -177,145 +167,140 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       canvas.width  = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      rectsDirty = true;
     }
 
-    // ── lazy node init after first resize gives correct w/h ─────────────────
-    function initNodes(now: number): Node[] {
-      return ICONS.map((icon) => {
-        const angle = Math.random() * Math.PI * 2;
-        const spd   = 0.1 + Math.random() * 0.16;
-        return {
-          x: NODE_R + Math.random() * (w - NODE_R * 2),
-          y: NODE_R + Math.random() * (h - NODE_R * 2),
-          vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
-          icon,
-          pulseR: 0, pulseA: 0,
-          nextPulse: now + 800 + Math.random() * 5000,
-        };
-      });
+    function mkNode(icon: IconType): Node {
+      const ang = Math.random() * Math.PI * 2, spd = 0.1 + Math.random() * 0.16;
+      return {
+        x: NODE_R + Math.random() * (w - NODE_R*2),
+        y: NODE_R + Math.random() * (h - NODE_R*2),
+        vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd,
+        icon, a: 0,
+        pulseR: 0, pulseA: 0,
+        nextPulse: performance.now() + 800 + Math.random()*5000,
+      };
     }
 
     function frame(now: number) {
-      if (!nodes) nodes = initNodes(now);
+      if (!nodes) nodes = ICONS.map(mkNode);
+      frameN++;
       ctx.clearRect(0, 0, w, h);
 
-      // ── update nodes ──────────────────────────────────────────────────────
-      // Collect obstacle rects once per frame (viewport coords)
-      const cRect         = canvas.getBoundingClientRect();
-      const obstacleRects = obstacles
-        .map(r => r.current?.getBoundingClientRect())
-        .filter(Boolean) as DOMRect[];
+      // Refresh cached rects when dirty; also every ~2 s as position fallback
+      if (rectsDirty || frameN % 120 === 0) refreshRects();
+      const cRect = canvas.getBoundingClientRect(); // always fresh
 
-      for (const nd of nodes) {
-        nd.x += nd.vx; nd.y += nd.vy;
-        if (nd.x < NODE_R + 4)     { nd.x = NODE_R + 4;     nd.vx =  Math.abs(nd.vx); }
-        if (nd.x > w - NODE_R - 4) { nd.x = w - NODE_R - 4; nd.vx = -Math.abs(nd.vx); }
-        if (nd.y < NODE_R + 4)     { nd.y = NODE_R + 4;     nd.vy =  Math.abs(nd.vy); }
-        if (nd.y > h - NODE_R - 4) { nd.y = h - NODE_R - 4; nd.vy = -Math.abs(nd.vy); }
-
-        // DOM element collision
-        for (const r of obstacleRects) collideRect(nd, r, cRect);
-
-        if (now >= nd.nextPulse) {
-          nd.pulseR = NODE_R; nd.pulseA = 0.45;
-          nd.nextPulse = now + 5000 + Math.random() * 6000;
-        }
-        if (nd.pulseA > 0) { nd.pulseR += 0.5; nd.pulseA -= 0.006; if (nd.pulseA < 0) nd.pulseA = 0; }
-      }
-
-      // ── connections ───────────────────────────────────────────────────────
-      const newConns = new Set<string>();
+      // ── node-node repulsion ───────────────────────────────────────────────
       for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx   = nodes[j].x - nodes[i].x;
-          const dy   = nodes[j].y - nodes[i].y;
-          const dist = Math.hypot(dx, dy);
-          if (dist >= MAX_DIST) continue;
-
-          const key = `${i}-${j}`;
-          newConns.add(key);
-          const alpha = (1 - dist / MAX_DIST) * 0.28;
-
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.strokeStyle = BLUE;
-          ctx.lineWidth   = 1;
-          ctx.setLineDash([5, 5]);
-          ctx.lineDashOffset = -(now / 40); // flowing dash animation
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x, nodes[i].y);
-          ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.stroke();
-          ctx.restore();
-
-          // spawn a packet the moment a connection forms (if not already one)
-          if (!liveConns.has(key) && !packets.some(p => p.ai === i && p.bi === j)) {
-            packets.push({ ai: i, bi: j, t: Math.random() });
+        for (let j = i+1; j < nodes.length; j++) {
+          const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
+          const d = Math.hypot(dx, dy);
+          if (d < REPEL_R && d > 0.001) {
+            const f = REPEL_STR * (REPEL_R/d - 1);
+            const fx = dx/d*f, fy = dy/d*f;
+            nodes[i].vx -= fx; nodes[i].vy -= fy;
+            nodes[j].vx += fx; nodes[j].vy += fy;
           }
         }
       }
 
-      // prune packets whose connection dropped
-      for (let p = packets.length - 1; p >= 0; p--) {
-        const { ai, bi } = packets[p];
-        if (!newConns.has(`${ai}-${bi}`)) packets.splice(p, 1);
+      // ── integrate + wall bounce + obstacle collision ──────────────────────
+      for (const nd of nodes) {
+        nd.x += nd.vx; nd.y += nd.vy;
+
+        // speed cap (prevents runaway after many repulsions)
+        const spd = Math.hypot(nd.vx, nd.vy);
+        if (spd > MAX_SPEED) { const inv = MAX_SPEED/spd; nd.vx *= inv; nd.vy *= inv; }
+
+        // wall bounce
+        if (nd.x < NODE_R+4)   { nd.x = NODE_R+4;   nd.vx =  Math.abs(nd.vx); }
+        if (nd.x > w-NODE_R-4) { nd.x = w-NODE_R-4; nd.vx = -Math.abs(nd.vx); }
+        if (nd.y < NODE_R+4)   { nd.y = NODE_R+4;   nd.vy =  Math.abs(nd.vy); }
+        if (nd.y > h-NODE_R-4) { nd.y = h-NODE_R-4; nd.vy = -Math.abs(nd.vy); }
+
+        // DOM obstacle collision (cached rects, fresh canvas origin)
+        for (const r of cachedRects) collideRect(nd, r, cRect);
+
+        // pulse ring trigger
+        if (now >= nd.nextPulse) {
+          nd.pulseR = NODE_R; nd.pulseA = 0.45;
+          nd.nextPulse = now + 5000 + Math.random()*6000;
+        }
+        if (nd.pulseA > 0) { nd.pulseR += 0.5; nd.pulseA = Math.max(0, nd.pulseA - 0.006); }
+
+        // fade in after spawn/respawn
+        if (nd.a < 1) nd.a = Math.min(1, nd.a + 0.025);
       }
-      liveConns.clear();
-      newConns.forEach(k => liveConns.add(k));
+
+      // ── connections (culled if line passes through any obstacle) ──────────
+      const newConns = new Set<string>();
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i+1; j < nodes.length; j++) {
+          const ni = nodes[i], nj = nodes[j];
+          if (Math.hypot(nj.x-ni.x, nj.y-ni.y) >= MAX_DIST) continue;
+          if (cachedRects.some(r => segBlocked(ni.x, ni.y, nj.x, nj.y, r, cRect))) continue;
+
+          const key   = `${i}-${j}`;
+          const dist  = Math.hypot(nj.x-ni.x, nj.y-ni.y);
+          const alpha = (1 - dist/MAX_DIST) * 0.28 * Math.min(ni.a, nj.a);
+          newConns.add(key);
+
+          ctx.save();
+          ctx.globalAlpha    = alpha;
+          ctx.strokeStyle    = C_BLUE; ctx.lineWidth = 1;
+          ctx.setLineDash([5,5]); ctx.lineDashOffset = -(now/40);
+          ctx.beginPath(); ctx.moveTo(ni.x, ni.y); ctx.lineTo(nj.x, nj.y); ctx.stroke();
+          ctx.restore();
+
+          if (!liveConns.has(key) && !packets.some(p => p.ai===i && p.bi===j))
+            packets.push({ ai:i, bi:j, t: Math.random() });
+        }
+      }
+
+      // prune packets for dropped connections
+      for (let p = packets.length-1; p >= 0; p--)
+        if (!newConns.has(`${packets[p].ai}-${packets[p].bi}`)) packets.splice(p, 1);
+      liveConns.clear(); newConns.forEach(k => liveConns.add(k));
 
       // ── packets ───────────────────────────────────────────────────────────
       for (const pkt of packets) {
-        pkt.t = (pkt.t + PACKET_SPEED) % 1;
-        const a = nodes[pkt.ai], b = nodes[pkt.bi];
-        const px = a.x + (b.x - a.x) * pkt.t;
-        const py = a.y + (b.y - a.y) * pkt.t;
-
+        pkt.t = (pkt.t + PKT_SPEED) % 1;
+        const ni = nodes[pkt.ai], nj = nodes[pkt.bi];
         ctx.save();
-        ctx.shadowBlur  = 8;
-        ctx.shadowColor = BLUE_BRIGHT;
-        ctx.fillStyle   = BLUE_BRIGHT;
-        ctx.globalAlpha = 0.92;
+        ctx.globalAlpha = 0.92 * Math.min(ni.a, nj.a);
+        ctx.shadowBlur = 8; ctx.shadowColor = C_BRIGHT; ctx.fillStyle = C_BRIGHT;
         ctx.beginPath();
-        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.arc(ni.x + (nj.x-ni.x)*pkt.t, ni.y + (nj.y-ni.y)*pkt.t, 3, 0, Math.PI*2);
         ctx.fill();
         ctx.restore();
       }
 
       // ── nodes ─────────────────────────────────────────────────────────────
       for (const nd of nodes) {
-        // pulse ring
         if (nd.pulseA > 0) {
           ctx.save();
-          ctx.globalAlpha = nd.pulseA;
-          ctx.strokeStyle = BLUE;
-          ctx.lineWidth   = 1;
-          ctx.beginPath();
-          ctx.arc(nd.x, nd.y, nd.pulseR, 0, Math.PI * 2);
-          ctx.stroke();
+          ctx.globalAlpha = nd.pulseA * nd.a;
+          ctx.strokeStyle = C_BLUE; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.pulseR, 0, Math.PI*2); ctx.stroke();
           ctx.restore();
         }
 
-        // glow + dark fill
         ctx.save();
-        ctx.shadowBlur  = 14;
-        ctx.shadowColor = BLUE_GLOW;
-        ctx.fillStyle   = BG_NODE;
-        ctx.beginPath();
-        ctx.arc(nd.x, nd.y, NODE_R, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = nd.a;
+        ctx.shadowBlur = 14; ctx.shadowColor = C_GLOW;
+        ctx.fillStyle = C_BG;
+        ctx.beginPath(); ctx.arc(nd.x, nd.y, NODE_R, 0, Math.PI*2); ctx.fill();
         ctx.restore();
 
-        // border ring
         ctx.save();
-        ctx.strokeStyle = "rgba(59,130,246,0.42)";
-        ctx.lineWidth   = 1;
-        ctx.beginPath();
-        ctx.arc(nd.x, nd.y, NODE_R, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.globalAlpha = 0.42 * nd.a;
+        ctx.strokeStyle = C_BLUE; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(nd.x, nd.y, NODE_R, 0, Math.PI*2); ctx.stroke();
         ctx.restore();
 
-        // icon
         ctx.save();
+        ctx.globalAlpha = 0.72 * nd.a;
         drawIcon(ctx, nd.icon, nd.x, nd.y);
         ctx.restore();
       }
@@ -323,12 +308,32 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       raf = requestAnimationFrame(frame);
     }
 
+    // ResizeObserver on obstacle elements: fires when terminal grows, columns resize, etc.
+    const roObs = new ResizeObserver(() => { rectsDirty = true; });
+    for (const ob of obstacles) { if (ob.current) roObs.observe(ob.current); }
+
+    // ResizeObserver on canvas itself: fires when hero section height changes
+    // (e.g. terminal growth expands the section). Updates w/h without respawning.
+    const roCanvas = new ResizeObserver(() => resize());
+    roCanvas.observe(canvas);
+
+    // Window resize: respawn nodes with fresh positions + fade-in
+    const onResize = () => {
+      resize();
+      nodes = null; packets.length = 0; liveConns.clear();
+    };
+    window.addEventListener("resize", onResize);
+
     resize();
-    window.addEventListener("resize", () => { resize(); nodes = null; packets.length = 0; liveConns.clear(); });
     raf = requestAnimationFrame(frame);
 
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-  }, []);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      roObs.disconnect();
+      roCanvas.disconnect();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <canvas
