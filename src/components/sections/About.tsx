@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { IconMail, IconPhone, IconLinkedIn, IconMapPin } from "@/components/icons";
 
 const specialisms = [
@@ -26,7 +28,13 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
           {/* Image column */}
-          <div className="hidden lg:block">
+          <motion.div
+            className="hidden lg:block"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0 }}
+          >
             <div className="rounded-xl overflow-hidden border sticky top-24" style={{ borderColor: "#1a2540" }}>
               <Image
                 src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=560&q=80"
@@ -43,10 +51,17 @@ export function About() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bio */}
-          <div className="space-y-4 text-sm leading-relaxed" style={{ color: "#64748b" }}>
+          <motion.div
+            className="space-y-4 text-sm leading-relaxed"
+            style={{ color: "#64748b" }}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <p>
               I am a Principal Security Consultant with over{" "}
               <strong style={{ color: "#f1f5f9" }}>27 years of experience in the Ministry of Defence</strong>,
@@ -70,10 +85,16 @@ export function About() {
               — combining deep technical expertise with effective stakeholder engagement and excellence in risk
               management within complex, mission-critical environments.
             </p>
-          </div>
+          </motion.div>
 
           {/* Cards */}
-          <div className="space-y-4">
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <div className="rounded-xl border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Contact</h3>
               <div className="space-y-3">
@@ -99,7 +120,7 @@ export function About() {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { IconMail, IconPhone, IconLinkedIn, IconMapPin, IconSend } from "@/components/icons";
 
 const contactRows = [
@@ -28,7 +29,13 @@ export function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           {/* Left */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
+          <motion.div
+            className="lg:col-span-2 flex flex-col gap-6"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0 }}
+          >
             <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
               I am available for Principal Security Consultant, Secure by Design architecture,
               GRC advisory and MoD programme roles. I have extensive experience working under
@@ -49,8 +56,15 @@ export function Contact() {
 
             {/* Contact details with icons */}
             <div className="rounded-xl border p-5 space-y-3.5" style={{ background: "#101625", borderColor: "#1a2540" }}>
-              {contactRows.map(({ label, value, href, Icon }) => (
-                <div key={label} className="flex items-center gap-3 text-sm">
+              {contactRows.map(({ label, value, href, Icon }, index) => (
+                <motion.div
+                  key={label}
+                  className="flex items-center gap-3 text-sm"
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.45, delay: index * 0.06 }}
+                >
                   <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                     style={{ background: "#162030", color: "#3b82f6", border: "1px solid #1a2540" }}>
                     <Icon size={13} />
@@ -61,7 +75,7 @@ export function Contact() {
                       ? <a href={href} className="text-sm" style={{ color: "#f1f5f9" }}>{value}</a>
                       : <span className="text-sm" style={{ color: "#64748b" }}>{value}</span>}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
@@ -75,12 +89,18 @@ export function Contact() {
                 and senior security leadership roles.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="lg:col-span-3 rounded-xl border p-8 flex flex-col gap-5"
-            style={{ background: "#101625", borderColor: "#1a2540" }}>
-
+          <motion.form
+            onSubmit={handleSubmit}
+            className="lg:col-span-3 rounded-xl border p-8 flex flex-col gap-5"
+            style={{ background: "#101625", borderColor: "#1a2540" }}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <Field id="fname" label="Name" type="text" placeholder="Your name" required />
               <Field id="femail" label="Email" type="email" placeholder="your@email.com" required />
@@ -122,7 +142,7 @@ export function Contact() {
                 Message sent — I&apos;ll be in touch shortly.
               </p>
             )}
-          </form>
+          </motion.form>
         </div>
       </div>
     </section>

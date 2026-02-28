@@ -1,3 +1,6 @@
+"use client";
+import { motion } from "framer-motion";
+
 const certs = [
   { abbr: "CISM",  label: "Certified Information Security Manager",                  issuer: "ISACA",                                   color: "#f59e0b", bg: "rgba(245,158,11,0.10)", border: "rgba(245,158,11,0.22)" },
   { abbr: "ISO",   label: "ISO 27001 Lead Auditor",                                  issuer: "Certification Body Accredited",            color: "#10b981", bg: "rgba(16,185,129,0.10)",  border: "rgba(16,185,129,0.22)"  },
@@ -19,10 +22,16 @@ export function Qualifications() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {certs.map((c) => (
-            <div key={c.abbr}
+          {certs.map((c, index) => (
+            <motion.div
+              key={c.abbr}
               className="rounded-xl border p-4 flex items-start gap-3 transition-transform duration-200 hover:-translate-y-0.5"
-              style={{ background: "#101625", borderColor: "#1a2540" }}>
+              style={{ background: "#101625", borderColor: "#1a2540" }}
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: index * 0.07 }}
+            >
               <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-mono font-bold flex-shrink-0 text-center leading-tight"
                 style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}` }}>
                 {c.abbr}
@@ -32,13 +41,20 @@ export function Qualifications() {
                 <p className="text-xs mb-1.5" style={{ color: "#64748b" }}>{c.issuer}</p>
                 <span className="font-mono text-xs" style={{ color: "#10b981" }}>Active</span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Education */}
-          <div className="rounded-xl border p-6" style={{ background: "#101625", borderColor: "#1a2540" }}>
+          <motion.div
+            className="rounded-xl border p-6"
+            style={{ background: "#101625", borderColor: "#1a2540" }}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5 }}
+          >
             <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Education</h3>
             <h4 className="font-mono font-semibold text-base mb-1" style={{ color: "#f1f5f9" }}>BSc (Hons) Security &amp; Intelligence</h4>
             <p className="text-sm mb-3" style={{ color: "#64748b" }}>University — First / Upper Second Class</p>
@@ -46,10 +62,17 @@ export function Qualifications() {
               style={{ background: "rgba(139,92,246,0.08)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.18)" }}>
               Defence CMI Leadership &amp; Management
             </span>
-          </div>
+          </motion.div>
 
           {/* Clearance */}
-          <div className="rounded-xl border p-6" style={{ background: "#101625", borderColor: "#1a2540" }}>
+          <motion.div
+            className="rounded-xl border p-6"
+            style={{ background: "#101625", borderColor: "#1a2540" }}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Security Clearances</h3>
             <div className="rounded-lg p-4 flex items-center gap-4 mb-3"
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.22)" }}>
@@ -68,7 +91,7 @@ export function Qualifications() {
             <p className="text-xs italic" style={{ color: "#64748b" }}>
               Available for SC, DV and above environments. References available upon request.
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
