@@ -25,7 +25,7 @@ export function Navbar() {
       <div className="w-full text-center py-2 px-4 text-sm flex items-center justify-center gap-4 flex-wrap"
         style={{ background: "#0d1629", borderBottom: "1px solid #1a2540" }}>
         <span style={{ color: "rgba(255,255,255,0.75)" }}>
-          Available for Defence &amp; MoD security engagements from Q2 2026
+          I am available for Defence &amp; MoD security engagements from Q2 2026
         </span>
         <a href="#contact" className="text-white font-semibold text-sm" style={{ borderBottom: "1px solid rgba(255,255,255,0.4)" }}>
           Get in touch →

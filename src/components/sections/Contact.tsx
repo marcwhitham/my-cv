@@ -21,9 +21,9 @@ export function Contact() {
           {/* Left */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
-              Available for Principal Security Consultant, Secure by Design architecture,
-              GRC advisory and MoD programme roles. Experienced working under NDA at
-              Official, Secret and above classifications.
+              I am available for Principal Security Consultant, Secure by Design architecture,
+              GRC advisory and MoD programme roles. I have extensive experience working under
+              NDA at Official, Secret and above classifications.
             </p>
 
             <div className="rounded-xl border p-5 space-y-3" style={{ background: "#101625", borderColor: "#1a2540" }}>

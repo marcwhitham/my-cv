@@ -97,8 +97,8 @@ export function Experience() {
         <div className="relative pl-8 border-l" style={{ borderColor: "#1a2540" }}>
           {roles.map((r, i) => (
             <div key={i} className="relative mb-8 last:mb-0">
-              {/* dot */}
-              <div className="absolute -left-[2.75rem] top-5 w-3.5 h-3.5 rounded-full border-2"
+              {/* dot — centered on the border-l line */}
+              <div className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 rounded-full border-2"
                 style={{
                   background: r.accent,
                   borderColor: "#0b0f1a",

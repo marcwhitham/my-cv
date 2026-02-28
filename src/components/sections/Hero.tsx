@@ -31,7 +31,7 @@ export function Hero() {
 
         <p className="text-base max-w-md" style={{ color: "#64748b" }}>
           <TypingAnimation
-            text="27 years securing UK Defence and critical national infrastructure. Principal Secure by Design Architect, MoD BETA programme lead, and Royal Navy veteran with DV clearance since 2004."
+            text="27 years securing UK Defence and critical national infrastructure. I am a Principal Secure by Design Architect, MoD BETA programme lead, and Royal Navy veteran with DV clearance since 2004."
             duration={18}
           />
         </p>

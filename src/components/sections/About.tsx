@@ -16,9 +16,9 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4 text-sm leading-relaxed" style={{ color: "#64748b" }}>
             <p>
-              Marc Whitham is a Principal Security Consultant with over{" "}
+              I am a Principal Security Consultant with over{" "}
               <strong style={{ color: "#f1f5f9" }}>27 years of experience in the Ministry of Defence</strong>,
-              specialising in technical security and Secure by Design. He is currently an active participant in the
+              specialising in technical security and Secure by Design. I am currently an active participant in the
               MoD Secure by Design deployment, directly involved in the rollout of the MoD&apos;s transformative
               Secure by Design Methodology — a fundamental shift from legacy accreditation practices.
             </p>
@@ -27,11 +27,11 @@ export function About() {
               <strong style={{ color: "#f1f5f9" }}>
                 Principal Secure by Design Architect for the Royal Navy Training Management Group
               </strong>
-              , Marc is responsible for the security of numerous training estates across the UK, overseeing both
+              , I am responsible for the security of numerous training estates across the UK, overseeing both
               concept and live service networks including a Central Security Operations Centre.
             </p>
             <p>
-              Marc&apos;s work delivers{" "}
+              My work delivers{" "}
               <strong style={{ color: "#f1f5f9" }}>
                 State of the Art Training IT solutions that directly impact front-line UK Defence operations
               </strong>{" "}
