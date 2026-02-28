@@ -1,16 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 40" width="90" height="40">
-  <defs>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&amp;display=swap');
-    </style>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <rect width="48" height="48" rx="8" fill="#0b1120"/>
   <text
-    x="2"
-    y="30"
-    font-family="'JetBrains Mono', 'Courier New', monospace"
-    font-size="28"
+    x="50%"
+    y="52%"
+    dominant-baseline="central"
+    text-anchor="middle"
+    font-family="'JetBrains Mono','Courier New',monospace"
+    font-size="16"
     font-weight="700"
+    letter-spacing="0.5"
     fill="#f1f5f9"
-    letter-spacing="1"
   >MW<tspan fill="#f59e0b">.</tspan></text>
 </svg>

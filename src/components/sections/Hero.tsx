@@ -16,7 +16,7 @@ export function Hero() {
       {/* Left */}
       <div className="flex flex-col gap-6">
         <div>
-          <Image src="/logo.svg" alt="MW" width={80} height={36} className="mb-6" />
+          <Image src="/logo.svg" alt="MW" width={56} height={56} className="mb-6" />
         </div>
 
         <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "#3b82f6" }}>

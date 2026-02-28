@@ -44,7 +44,7 @@ export function Navbar() {
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-8">
           <a href="#" className="mr-auto" style={{ opacity: 1 }}>
-            <Image src="/logo.svg" alt="MW" width={72} height={32} priority />
+            <Image src="/logo.svg" alt="MW" width={36} height={36} priority />
           </a>
           <ul className="hidden md:flex items-center gap-7 list-none">
             {links.map((l) => (
