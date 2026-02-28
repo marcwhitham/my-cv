@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
-import { TypingAnimation } from "@/components/magicui/typing-animation";
 import { NumberTicker } from "@/components/magicui/number-ticker";
+import { ParticleCanvas } from "@/components/magicui/particle-canvas";
 import { IconArrowRight, IconMessageCircle } from "@/components/icons";
+import { useEffect, useState, useRef } from "react";
 
 const stats = [
   { value: 27, suffix: "+", label: "Years MoD Service" },
@@ -10,12 +11,160 @@ const stats = [
   { value: 10, suffix: "+", label: "Certs & Quals" },
 ];
 
+const TERMINAL_LINES = [
+  { prompt: "$ whoami", output: "> Marc Whitham — Principal Security Consultant" },
+  { prompt: "$ clearance --status", output: "> DV Active · Held since 2004 · Highest UK level" },
+  { prompt: "$ specialisms --list", output: "> Secure by Design · NIST RMF · ISO 27001 · SOC Lead" },
+  { prompt: "$ availability --check", output: "> Available Q2 2026 · SC/DV environments ✓" },
+];
+
+const CHAR_DELAY = 150;
+const LINE_GAP = 400;
+
+interface TerminalLine {
+  text: string;
+  isPrompt: boolean;
+  complete: boolean;
+}
+
+function TerminalBlock() {
+  const [lines, setLines] = useState<TerminalLine[]>([]);
+  const [showCursor, setShowCursor] = useState(true);
+  const done = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function typeAll() {
+      for (const entry of TERMINAL_LINES) {
+        if (cancelled) return;
+
+        // Type the prompt line
+        for (let i = 1; i <= entry.prompt.length; i++) {
+          if (cancelled) return;
+          await delay(CHAR_DELAY);
+          setLines((prev) => {
+            const next = [...prev];
+            const lastIdx = next.length - 1;
+            if (lastIdx >= 0 && !next[lastIdx].complete && next[lastIdx].isPrompt) {
+              next[lastIdx] = { ...next[lastIdx], text: entry.prompt.slice(0, i) };
+            } else {
+              next.push({ text: entry.prompt.slice(0, i), isPrompt: true, complete: false });
+            }
+            return next;
+          });
+        }
+        // Mark prompt complete
+        setLines((prev) => {
+          const next = [...prev];
+          next[next.length - 1] = { ...next[next.length - 1], complete: true };
+          return next;
+        });
+
+        await delay(LINE_GAP);
+        if (cancelled) return;
+
+        // Type the output line
+        for (let i = 1; i <= entry.output.length; i++) {
+          if (cancelled) return;
+          await delay(CHAR_DELAY / 3);
+          setLines((prev) => {
+            const next = [...prev];
+            const lastIdx = next.length - 1;
+            if (lastIdx >= 0 && !next[lastIdx].complete && !next[lastIdx].isPrompt) {
+              next[lastIdx] = { ...next[lastIdx], text: entry.output.slice(0, i) };
+            } else {
+              next.push({ text: entry.output.slice(0, i), isPrompt: false, complete: false });
+            }
+            return next;
+          });
+        }
+        // Mark output complete
+        setLines((prev) => {
+          const next = [...prev];
+          next[next.length - 1] = { ...next[next.length - 1], complete: true };
+          return next;
+        });
+
+        await delay(LINE_GAP);
+      }
+      done.current = true;
+    }
+
+    typeAll();
+
+    // Blinking cursor interval
+    const cursorInterval = setInterval(() => {
+      setShowCursor((v) => !v);
+    }, 530);
+
+    return () => {
+      cancelled = true;
+      clearInterval(cursorInterval);
+    };
+  }, []);
+
+  return (
+    <div
+      className="rounded-xl overflow-hidden font-mono text-xs"
+      style={{ background: "#0b1120", border: "1px solid #1a2540" }}
+    >
+      {/* Title bar */}
+      <div
+        className="flex items-center gap-2 px-3 py-2 border-b"
+        style={{ borderColor: "#1a2540", background: "#0d1526" }}
+      >
+        <span className="w-3 h-3 rounded-full" style={{ background: "#ef4444" }} />
+        <span className="w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} />
+        <span className="w-3 h-3 rounded-full" style={{ background: "#10b981" }} />
+        <span className="ml-2" style={{ color: "#2d3f5a" }}>// terminal</span>
+      </div>
+
+      {/* Terminal body */}
+      <div className="p-4 min-h-[8rem] flex flex-col gap-1">
+        {lines.map((line, i) => (
+          <div
+            key={i}
+            style={{ color: line.isPrompt ? "#3b82f6" : "#10b981" }}
+          >
+            {line.text}
+            {i === lines.length - 1 && done.current && showCursor && (
+              <span
+                className="inline-block w-1.5 h-3.5 ml-0.5 align-middle"
+                style={{ background: "#f1f5f9", opacity: 0.8 }}
+              />
+            )}
+          </div>
+        ))}
+        {lines.length === 0 && (
+          <span style={{ color: "#3b82f6" }}>
+            {showCursor && (
+              <span
+                className="inline-block w-1.5 h-3.5 align-middle"
+                style={{ background: "#f1f5f9", opacity: 0.8 }}
+              />
+            )}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function Hero() {
   return (
-    <section className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)]">
+    <section
+      className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)] overflow-hidden"
+    >
+      {/* Particle background */}
+      <ParticleCanvas />
 
       {/* Left */}
-      <div className="flex flex-col gap-6">
+      <div className="relative z-10 flex flex-col gap-6">
         <Image src="/logo.svg" alt="MW" width={56} height={56} className="mb-2" />
 
         <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "#3b82f6" }}>
@@ -28,12 +177,10 @@ export function Hero() {
           <span style={{ color: "#f59e0b" }}>Whitham</span>
         </h1>
 
-        <p className="text-base max-w-md" style={{ color: "#64748b" }}>
-          <TypingAnimation
-            text="27 years securing UK Defence and critical national infrastructure. I am a Principal Secure by Design Architect, MoD BETA programme lead, and Royal Navy veteran with DV clearance since 2004."
-            duration={18}
-          />
-        </p>
+        {/* Terminal block replacing TypingAnimation */}
+        <div className="max-w-md">
+          <TerminalBlock />
+        </div>
 
         <div className="flex gap-3 flex-wrap">
           <a href="#experience"
@@ -74,7 +221,7 @@ export function Hero() {
       </div>
 
       {/* Right */}
-      <div className="hidden lg:flex flex-col gap-4">
+      <div className="relative z-10 hidden lg:flex flex-col gap-4">
 
         {/* Photo */}
         <div className="relative rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>
@@ -95,7 +242,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Credential cards 2×2 */}
+        {/* Credential cards 2x2 — glassmorphism */}
         <div className="grid grid-cols-2 gap-4">
           {[
             {
@@ -119,7 +266,16 @@ export function Hero() {
           ].map((card, i) => {
             if ("isOrgs" in card && card.isOrgs) {
               return (
-                <div key={i} className="rounded-xl p-4 border" style={{ background: "#101625", borderColor: "#1a2540" }}>
+                <div
+                  key={i}
+                  className="rounded-xl p-4 border"
+                  style={{
+                    background: "rgba(16,22,37,0.55)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    borderColor: "rgba(59,130,246,0.15)",
+                  }}
+                >
                   <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "#2d3f5a" }}>Orgs served</p>
                   <div className="flex flex-wrap gap-1.5">
                     {["Royal Navy", "Fujitsu", "MoD", "Selborne", "HMNB Clyde"].map(o => (
@@ -134,8 +290,16 @@ export function Hero() {
             }
             const c = card as { icon: React.ReactNode; color: string; bg: string; border: string; title: string; sub: string; badge: string };
             return (
-              <div key={i} className="rounded-xl p-4 border flex items-start gap-3"
-                style={{ background: "#101625", borderColor: "#1a2540" }}>
+              <div
+                key={i}
+                className="rounded-xl p-4 border flex items-start gap-3"
+                style={{
+                  background: "rgba(16,22,37,0.55)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderColor: "rgba(59,130,246,0.15)",
+                }}
+              >
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                   style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.color }}>
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{c.icon}</svg>
