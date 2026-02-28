@@ -11,13 +11,31 @@ const links = [
   { href: "#contact",       label: "Contact" },
 ];
 
+const sectionIds = ["about", "experience", "skills", "qualifications", "contact"];
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState("");
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(id); },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
   }, []);
 
   return (
@@ -45,16 +63,22 @@ export function Navbar() {
             <Image src="/logo.svg" alt="MW" width={36} height={36} priority />
           </a>
           <ul className="hidden md:flex items-center gap-7 list-none">
-            {links.map((l) => (
-              <li key={l.href}>
-                <a href={l.href} className="text-sm font-medium transition-colors"
-                  style={{ color: "#64748b" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "#f1f5f9")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "#64748b")}>
-                  {l.label}
-                </a>
-              </li>
-            ))}
+            {links.map((l) => {
+              const id = l.href.slice(1);
+              return (
+                <li key={l.href}>
+                  <a href={l.href} className="text-sm font-medium"
+                    style={{
+                      color: active === id ? "#f1f5f9" : "#64748b",
+                      borderBottom: active === id ? "2px solid #f59e0b" : "2px solid transparent",
+                      paddingBottom: "2px",
+                      transition: "color 0.2s, border-color 0.2s",
+                    }}>
+                    {l.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
           <a href="/marc-whitham-cv.pdf" download
             className="flex items-center gap-2 text-sm font-bold px-5 py-2 rounded-full transition-transform hover:-translate-y-px"
