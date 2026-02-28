@@ -18,9 +18,9 @@ const NODE_R       = 15;          // circle radius around icon
 const MAX_DIST     = 220;         // connection threshold
 const PACKET_SPEED = 0.0038;      // fraction of edge per frame
 const BLUE         = "#3b82f6";
+const BLUE_BRIGHT  = "rgba(147,197,253,0.92)"; // lighter blue for packets
 const BLUE_GLOW    = "rgba(59,130,246,0.32)";
-const GOLD         = "#f59e0b";
-const BG_NODE      = "#0c1322";
+const BG_NODE      = "rgba(12,19,34,0.52)";    // semi-transparent so text shows through
 const ICONS: IconType[] = [
   "shield", "lock", "server", "hub", "eye", "chip", "shield", "lock", "eye",
 ];
@@ -220,9 +220,9 @@ export function ParticleCanvas() {
 
         ctx.save();
         ctx.shadowBlur  = 8;
-        ctx.shadowColor = GOLD;
-        ctx.fillStyle   = GOLD;
-        ctx.globalAlpha = 0.88;
+        ctx.shadowColor = BLUE_BRIGHT;
+        ctx.fillStyle   = BLUE_BRIGHT;
+        ctx.globalAlpha = 0.92;
         ctx.beginPath();
         ctx.arc(px, py, 3, 0, Math.PI * 2);
         ctx.fill();
@@ -281,7 +281,7 @@ export function ParticleCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 15 }}
     />
   );
 }
