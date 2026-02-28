@@ -161,12 +161,11 @@ export function Hero() {
   const terminalRef  = useRef<HTMLDivElement>(null);
 
   return (
-    <section
-      className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)] overflow-hidden"
-    >
-      {/* Particle background */}
+    <div className="relative w-full overflow-hidden min-h-[calc(100vh-96px)]">
+      {/* Full-width canvas */}
       <ParticleCanvas obstacles={[leftColRef, rightColRef, terminalRef]} />
 
+      <section className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)]">
       {/* Left */}
       <div ref={leftColRef} className="relative z-10 flex flex-col gap-6">
         <Image src="/logo.svg" alt="MW" width={56} height={56} className="mb-2" />
@@ -321,6 +320,7 @@ export function Hero() {
           })}
         </div>
       </div>
-    </section>
+      </section>
+    </div>
   );
 }
