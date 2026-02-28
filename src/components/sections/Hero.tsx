@@ -121,7 +121,7 @@ function TerminalBlock() {
       </div>
 
       {/* Terminal body */}
-      <div className="p-4 min-h-[8rem] flex flex-col gap-1">
+      <div className="p-4 h-[12rem] overflow-hidden flex flex-col gap-1">
         {lines.map((line, i) => (
           <div
             key={i}
