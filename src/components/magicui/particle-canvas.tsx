@@ -9,6 +9,7 @@ interface Node {
   x: number; y: number; vx: number; vy: number;
   icon: IconType; ip: string; a: number;
   pulseR: number; pulseA: number; nextPulse: number;
+  status: string | null; statusBorn: number;
 }
 interface Packet {
   ai: number; bi: number; t: number;
@@ -31,7 +32,7 @@ interface Msg {
 
 // ─── constants ────────────────────────────────────────────────────────────────
 const NODE_R    = 15;
-const MAX_DIST  = 220;
+const MAX_DIST  = 300;
 const PKT_SPEED = 0.006;
 const DROP_P    = 0.13;
 const REPEL_R   = 72;
@@ -190,6 +191,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
         vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd,
         icon, ip: makeIP(), a: 0,
         pulseR: 0, pulseA: 0, nextPulse: performance.now()+800+Math.random()*5000,
+        status: null, statusBorn: 0,
       };
     }
 
@@ -242,6 +244,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
 
       // ── connections ─────────────────────────────────────────────────────────
       const newConns = new Set<string>();
+      const connectedNodes = new Set<number>();
       for (let i=0; i<nodes.length; i++) {
         for (let j=i+1; j<nodes.length; j++) {
           const ni=nodes[i], nj=nodes[j];
@@ -250,6 +253,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
           if (cachedRects.some(r=>segBlocked(ni.x,ni.y,nj.x,nj.y,r,cRect))) continue;
           const key=`${i}-${j}`;
           newConns.add(key);
+          connectedNodes.add(i); connectedNodes.add(j);
           const alpha=(1-dist/MAX_DIST)*0.28*Math.min(ni.a,nj.a);
           ctx.save();
           ctx.globalAlpha=alpha; ctx.strokeStyle=C_BLUE; ctx.lineWidth=1;
@@ -273,10 +277,12 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
         if (estConns.has(key)) {
           if (!cooldowns.has(key) || now>=cooldowns.get(key)!) {
             packets.push(mkPkt(ai,bi,key,"data"));
+            nodes[ai].pulseR=NODE_R; nodes[ai].pulseA=0.5;
             cooldowns.delete(key);
           }
         } else {
           packets.push(mkPkt(ai,bi,key,"syn"));
+          nodes[ai].pulseR=NODE_R; nodes[ai].pulseA=0.5;
         }
       }
 
@@ -303,13 +309,16 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
         // arrival
         if (pkt.t>=1) {
           if (pkt.type==="syn") {
+            nodes[pkt.bi].pulseR=NODE_R; nodes[pkt.bi].pulseA=0.5;
             pkt.type="ack"; pkt.payload="ACK"; pkt.dir=-1; pkt.t=0;
           } else if (pkt.type==="ack") {
+            nodes[pkt.ai].pulseR=NODE_R; nodes[pkt.ai].pulseA=0.5;
             estConns.add(pkt.connKey);
-            msgs.push({ x:ni.x+15,y:ni.y-20,text:"LINK UP",born:now,color:C_GREEN });
+            nodes[pkt.ai].status="LINK UP"; nodes[pkt.ai].statusBorn=now;
             cooldowns.set(pkt.connKey,now+rn(100,400));
             packets.splice(p,1);
           } else {
+            nodes[pkt.bi].pulseR=NODE_R; nodes[pkt.bi].pulseA=0.5;
             cooldowns.set(pkt.connKey,now+rn(200,900));
             packets.splice(p,1);
           }
@@ -414,6 +423,30 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
         ctx.textAlign="center"; ctx.setLineDash([]);
         ctx.fillText(nd.ip,nd.x,nd.y+NODE_R+11);
         ctx.restore();
+        // above-node status label
+        const ndIdx=nodes.indexOf(nd);
+        if (nd.status) {
+          const age=now-nd.statusBorn;
+          if (age>2200) { nd.status=null; }
+          else {
+            const a=age<300?age/300:age<1700?1:1-(age-1700)/500;
+            ctx.save(); ctx.globalAlpha=a*nd.a;
+            ctx.fillStyle=C_GREEN;
+            ctx.font="bold 7.5px 'Courier New',monospace";
+            ctx.textAlign="center"; ctx.setLineDash([]);
+            ctx.fillText(nd.status,nd.x,nd.y-NODE_R-8);
+            ctx.restore();
+          }
+        } else if (!connectedNodes.has(ndIdx) && nd.a>0.5) {
+          // no connections — show searching
+          const blink=Math.sin(now/600)>0;
+          ctx.save(); ctx.globalAlpha=(blink?0.55:0.3)*nd.a;
+          ctx.fillStyle="rgba(148,163,184,0.9)";
+          ctx.font="7px 'Courier New',monospace";
+          ctx.textAlign="center"; ctx.setLineDash([]);
+          ctx.fillText("searching...",nd.x,nd.y-NODE_R-8);
+          ctx.restore();
+        }
       }
 
       raf=requestAnimationFrame(frame);
