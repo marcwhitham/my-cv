@@ -5,22 +5,22 @@ import { motion } from "framer-motion";
 const groups = [
   {
     category: "MoD Policy & Doctrine",
-    accent: "#f59e0b",
+    accent: "var(--gold)",
     items: ["JSP 440 / 453 / 604", "STRAP", "Defence CMI", "ITSO / DITSO (MoD)"],
   },
   {
     category: "International Standards",
-    accent: "#3b82f6",
+    accent: "var(--blue)",
     items: ["ISO 27001", "NIST 800 Series", "NIST CMF & RMF", "Cyber Essentials Plus"],
   },
   {
     category: "Government Guidance",
-    accent: "#10b981",
+    accent: "var(--green)",
     items: ["NCSC Guidance", "Secure by Design", "SQEP Workforce Mgmt", "NCSC CAF"],
   },
   {
     category: "Operations & Governance",
-    accent: "#8b5cf6",
+    accent: "var(--purple)",
     items: ["SOC Operations", "Cyber Assurance Review Board", "Info Asset Assurance", "Risk Management"],
   },
 ];
@@ -29,19 +29,19 @@ export function FrameworksBand() {
   return (
     <section
       style={{
-        background: "#0b0f1a",
-        borderTop: "1px solid #1a2540",
-        borderBottom: "1px solid #1a2540",
+        background: "var(--surface)",
+        borderTop: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
         padding: "4rem 0",
       }}
     >
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "var(--blue)" }}>
           // Operational Standards Applied
         </p>
         <h2
           className="font-mono font-bold tracking-tight mb-10"
-          style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}
+          style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "var(--foreground)" }}
         >
           Standards &amp; Frameworks
         </h2>
@@ -51,8 +51,8 @@ export function FrameworksBand() {
             <motion.div
               key={group.category}
               style={{
-                background: "#101625",
-                border: "1px solid #1a2540",
+                background: "var(--card)",
+                border: "1px solid var(--border)",
                 borderTop: `3px solid ${group.accent}`,
                 padding: "1.25rem 1.25rem 1.5rem",
               }}
@@ -76,7 +76,7 @@ export function FrameworksBand() {
                     >
                       ›
                     </span>
-                    <span className="font-mono text-xs leading-snug" style={{ color: "#64748b" }}>
+                    <span className="font-mono text-xs leading-snug" style={{ color: "var(--muted)" }}>
                       {item}
                     </span>
                   </li>

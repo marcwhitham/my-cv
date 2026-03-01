@@ -53,10 +53,10 @@ const imageStrip = [
 
 export function Skills() {
   return (
-    <section id="skills" className="py-24" style={{ background: "#060810" }}>
+    <section id="skills" className="py-24" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>03 / Skills</p>
-        <h2 className="font-mono font-bold tracking-tight mb-12" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "var(--blue)" }}>03 / Skills</p>
+        <h2 className="font-mono font-bold tracking-tight mb-12" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "var(--foreground)" }}>
           Technical &amp; Professional Expertise
         </h2>
 
@@ -65,20 +65,20 @@ export function Skills() {
             <motion.div
               key={block.title}
               className="border p-6"
-              style={{ background: "#101625", borderColor: "#1a2540" }}
+              style={{ background: "var(--card)", borderColor: "var(--border)" }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: index * 0.1 }}
             >
-              <h3 className="font-mono font-semibold text-sm mb-5" style={{ color: "#f1f5f9" }}>
+              <h3 className="font-mono font-semibold text-sm mb-5" style={{ color: "var(--foreground)" }}>
                 {block.title}
               </h3>
               <ul className="space-y-3">
                 {block.skills.map((skill) => (
                   <li key={skill} className="flex items-start gap-2">
-                    <span className="font-bold flex-shrink-0 mt-0.5" style={{ color: "#3b82f6", fontSize: "0.7rem" }}>›</span>
-                    <span className="text-sm leading-snug" style={{ color: "#64748b" }}>{skill}</span>
+                    <span className="font-bold flex-shrink-0 mt-0.5" style={{ color: "var(--blue)", fontSize: "0.7rem" }}>›</span>
+                    <span className="text-sm leading-snug" style={{ color: "var(--muted)" }}>{skill}</span>
                   </li>
                 ))}
               </ul>
@@ -92,7 +92,7 @@ export function Skills() {
             <motion.div
               key={caption}
               className="relative overflow-hidden border"
-              style={{ borderColor: "#1a2540" }}
+              style={{ borderColor: "var(--border)" }}
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -107,7 +107,7 @@ export function Skills() {
                 style={{ aspectRatio: "16/9", filter: "brightness(0.5) saturate(0.6)" }}
               />
               <div className="absolute inset-0 flex items-end">
-                <p className="w-full px-3 py-2 font-mono text-xs" style={{ color: "#64748b", background: "rgba(6,8,16,0.6)" }}>
+                <p className="w-full px-3 py-2 font-mono text-xs" style={{ color: "var(--muted)", background: "rgba(6,8,16,0.6)" }}>
                   // {caption}
                 </p>
               </div>

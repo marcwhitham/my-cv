@@ -21,9 +21,9 @@ export function CertMarquee() {
   return (
     <section
       style={{
-        background: "#060810",
-        borderTop: "1px solid #1a2540",
-        borderBottom: "1px solid #1a2540",
+        background: "var(--background)",
+        borderTop: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
       }}
       className="py-8 w-full"
     >
@@ -52,9 +52,9 @@ export function CertMarquee() {
               key={i}
               className="font-mono text-xs px-3 py-1.5 border whitespace-nowrap"
               style={{
-                background: "#162030",
-                color: "#64748b",
-                borderColor: "#1a2540",
+                background: "var(--surface2)",
+                color: "var(--muted)",
+                borderColor: "var(--border)",
               }}
             >
               {cert}

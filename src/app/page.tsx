@@ -14,7 +14,7 @@ import { FrameworksBand } from "@/components/sections/FrameworksBand";
 
 export default function Home() {
   return (
-    <main style={{ background: "#060810", minHeight: "100vh" }}>
+    <main style={{ background: "var(--background)", minHeight: "100vh" }}>
       <Navbar />
       <Hero />
       <CertMarquee />

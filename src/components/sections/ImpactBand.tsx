@@ -52,9 +52,9 @@ export function ImpactBand() {
     <section
       ref={ref}
       style={{
-        background: "#0b0f1a",
-        borderTop: "1px solid #1a2540",
-        borderBottom: "1px solid #1a2540",
+        background: "var(--surface)",
+        borderTop: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
       }}
       className="py-10 w-full"
     >
@@ -68,16 +68,16 @@ export function ImpactBand() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="flex flex-col items-center text-center gap-2"
             >
-              <item.Icon size={20} color="#f59e0b" />
+              <item.Icon size={20} color="var(--gold)" />
               <span
                 className="font-mono font-bold text-4xl leading-none"
-                style={{ color: "#f59e0b" }}
+                style={{ color: "var(--gold)" }}
               >
                 {item.value}
               </span>
               <span
                 className="font-mono text-xs uppercase tracking-widest"
-                style={{ color: "#64748b" }}
+                style={{ color: "var(--muted)" }}
               >
                 {item.label}
               </span>

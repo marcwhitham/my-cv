@@ -88,7 +88,6 @@ const roles = [
   },
 ];
 
-// Wrapper component that handles the useInView hook per timeline item
 function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -103,13 +102,12 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ duration: 0.5, delay: i * 0.08 }}
     >
-      {/* dot — centered on the border-l line */}
       {isCurrentRole ? (
         <motion.div
           className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 border-2"
           style={{
             background: r.accent,
-            borderColor: "#0b0f1a",
+            borderColor: "var(--surface)",
           }}
           animate={{
             boxShadow: [
@@ -130,7 +128,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
           className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 border-2"
           style={{
             background: r.accent,
-            borderColor: "#0b0f1a",
+            borderColor: "var(--surface)",
             boxShadow: `0 0 10px ${r.accentDim}`,
           }}
         />
@@ -138,15 +136,15 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
 
       <div
         className="border p-6 transition-colors duration-200"
-        style={{ background: "#101625", borderColor: "#1a2540" }}
+        style={{ background: "var(--card)", borderColor: "var(--border)" }}
         onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = r.accent + "55")}
-        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = "#1a2540")}
+        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
       >
         <div className="flex justify-between items-start gap-4 mb-4 flex-wrap">
           <div>
-            <h3 className="font-mono font-bold text-base mb-1" style={{ color: "#f1f5f9" }}>{r.title}</h3>
-            <p className="text-sm" style={{ color: "#64748b" }}>
-              {r.org}{r.sub && <span style={{ color: "#2d3f5a" }}> · {r.sub}</span>}
+            <h3 className="font-mono font-bold text-base mb-1" style={{ color: "var(--foreground)" }}>{r.title}</h3>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
+              {r.org}{r.sub && <span style={{ color: "var(--dim)" }}> · {r.sub}</span>}
             </p>
           </div>
           <span
@@ -159,9 +157,9 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
 
         <ul className="space-y-1.5 mb-4">
           {r.bullets.map((b, j) => (
-            <li key={j} className="text-sm pl-4 relative" style={{ color: "#64748b" }}>
-              <span className="absolute left-0 font-bold" style={{ color: "#3b82f6" }}>›</span>
-              <span dangerouslySetInnerHTML={{ __html: b.replace(/<strong>/g, '<strong style="color:#f1f5f9">') }} />
+            <li key={j} className="text-sm pl-4 relative" style={{ color: "var(--muted)" }}>
+              <span className="absolute left-0 font-bold" style={{ color: "var(--blue)" }}>›</span>
+              <span dangerouslySetInnerHTML={{ __html: b.replace(/<strong>/g, '<strong style="color:var(--foreground)">') }} />
             </li>
           ))}
         </ul>
@@ -171,7 +169,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
             <span
               key={t}
               className="font-mono text-xs px-2 py-0.5"
-              style={{ background: "rgba(139,92,246,0.08)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.18)" }}
+              style={{ background: "rgba(139,92,246,0.08)", color: "var(--purple)", border: "1px solid rgba(139,92,246,0.18)" }}
             >
               {t}
             </span>
@@ -184,17 +182,17 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
 
 export function Experience() {
   return (
-    <section id="experience" className="py-24" style={{ background: "#0b0f1a" }}>
+    <section id="experience" className="py-24" style={{ background: "var(--surface)" }}>
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>05 / Experience</p>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "var(--blue)" }}>05 / Experience</p>
         <h2
           className="font-mono font-bold tracking-tight mb-12"
-          style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}
+          style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "var(--foreground)" }}
         >
           Career History
         </h2>
 
-        <div className="relative pl-8 border-l" style={{ borderColor: "#1a2540" }}>
+        <div className="relative pl-8 border-l" style={{ borderColor: "var(--border)" }}>
           {roles.map((r, i) => (
             <TimelineItem key={i} r={r} i={i} />
           ))}

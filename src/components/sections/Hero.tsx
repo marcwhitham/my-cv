@@ -236,16 +236,16 @@ export function Hero() {
       <div className="relative z-10 hidden lg:flex flex-col gap-4">
 
         {/* Profile photo */}
-        <div className="relative w-full overflow-hidden" style={{ border: "1px solid var(--border)", aspectRatio: "3 / 4", maxHeight: "420px" }}>
+        <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3 / 4", maxHeight: "420px" }}>
           <Image
-            src="/marc.jpg"
+            src="/marc.png"
             alt="Marc Whitham"
             fill
             sizes="320px"
-            className="object-contain"
+            className="object-cover"
+            style={{ objectPosition: "center 15%" }}
             priority
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(6,8,16,0.6) 0%, transparent 50%)" }} />
         </div>
 
         {/* Credential cards 2x2 — glassmorphism */}

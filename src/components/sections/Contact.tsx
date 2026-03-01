@@ -20,10 +20,10 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-24" style={{ background: "#060810" }}>
+    <section id="contact" className="py-24" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>06 / Contact</p>
-        <h2 className="font-mono font-bold tracking-tight mb-12" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "var(--blue)" }}>06 / Contact</p>
+        <h2 className="font-mono font-bold tracking-tight mb-12" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "var(--foreground)" }}>
           Get In Touch
         </h2>
 
@@ -36,14 +36,14 @@ export function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0 }}
           >
-            <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
               I am available for Principal Security Consultant, Secure by Design architecture,
               GRC advisory and MoD programme roles. I have extensive experience working under
               NDA at Official, Secret and above classifications.
             </p>
 
             {/* Contact image */}
-            <div className="overflow-hidden border" style={{ borderColor: "#1a2540" }}>
+            <div className="overflow-hidden border" style={{ borderColor: "var(--border)" }}>
               <Image
                 src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=560&q=75"
                 alt="Global network connections"
@@ -54,8 +54,8 @@ export function Contact() {
               />
             </div>
 
-            {/* Contact details with icons */}
-            <div className="border p-5 space-y-3.5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            {/* Contact details */}
+            <div className="border p-5 space-y-3.5" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
               {contactRows.map(({ label, value, href, Icon }, index) => (
                 <motion.div
                   key={label}
@@ -66,25 +66,25 @@ export function Contact() {
                   transition={{ duration: 0.45, delay: index * 0.06 }}
                 >
                   <div className="w-7 h-7 flex items-center justify-center flex-shrink-0"
-                    style={{ background: "#162030", color: "#3b82f6", border: "1px solid #1a2540" }}>
+                    style={{ background: "var(--surface2)", color: "var(--blue)", border: "1px solid var(--border)" }}>
                     <Icon size={13} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-mono text-xs leading-none mb-0.5" style={{ color: "#2d3f5a" }}>{label}</span>
+                    <span className="font-mono text-xs leading-none mb-0.5" style={{ color: "var(--dim)" }}>{label}</span>
                     {href
-                      ? <a href={href} className="text-sm" style={{ color: "#f1f5f9" }}>{value}</a>
-                      : <span className="text-sm" style={{ color: "#64748b" }}>{value}</span>}
+                      ? <a href={href} className="text-sm" style={{ color: "var(--foreground)" }}>{value}</a>
+                      : <span className="text-sm" style={{ color: "var(--muted)" }}>{value}</span>}
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            <div className="border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            <div className="border p-5" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
-                <span className="font-mono text-xs font-semibold" style={{ color: "#10b981" }}>Available Q2 2026</span>
+                <span className="font-mono text-xs font-semibold" style={{ color: "var(--green)" }}>Available Q2 2026</span>
               </div>
-              <p className="text-xs" style={{ color: "#64748b" }}>
+              <p className="text-xs" style={{ color: "var(--muted)" }}>
                 Open to SC / DV-cleared defence engagements, Secure by Design contracts,
                 and senior security leadership roles.
               </p>
@@ -95,7 +95,7 @@ export function Contact() {
           <motion.form
             onSubmit={handleSubmit}
             className="lg:col-span-3 border p-8 flex flex-col gap-5"
-            style={{ background: "#101625", borderColor: "#1a2540" }}
+            style={{ background: "var(--card)", borderColor: "var(--border)" }}
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -108,9 +108,9 @@ export function Contact() {
             <Field id="forg" label="Organisation" type="text" placeholder="Company or department" />
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="ftype" className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>Engagement type</label>
+              <label htmlFor="ftype" className="text-xs font-medium tracking-wide" style={{ color: "var(--muted)" }}>Engagement type</label>
               <select id="ftype" className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
-                style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }}>
+                style={{ background: "var(--surface2)", borderColor: "var(--border)", color: "var(--foreground)" }}>
                 <option value="">Select…</option>
                 <option>Secure by Design Architecture</option>
                 <option>Principal Security Consultant</option>
@@ -123,22 +123,22 @@ export function Contact() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="fmsg" className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>Message</label>
+              <label htmlFor="fmsg" className="text-xs font-medium tracking-wide" style={{ color: "var(--muted)" }}>Message</label>
               <textarea id="fmsg" rows={5} required placeholder="Outline the engagement or opportunity…"
                 className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors resize-vertical"
-                style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }} />
+                style={{ background: "var(--surface2)", borderColor: "var(--border)", color: "var(--foreground)" }} />
             </div>
 
             <button type="submit"
               className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold transition-transform hover:-translate-y-0.5"
-              style={{ background: "#3b82f6", color: "#fff" }}>
+              style={{ background: "var(--blue)", color: "#fff" }}>
               Send Message
               <IconSend size={15} />
             </button>
 
             {status === "ok" && (
               <p className="text-center text-sm py-2 px-4"
-                style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", border: "1px solid rgba(16,185,129,0.20)" }}>
+                style={{ background: "rgba(16,185,129,0.10)", color: "var(--green)", border: "1px solid rgba(16,185,129,0.20)" }}>
                 Message sent — I&apos;ll be in touch shortly.
               </p>
             )}
@@ -154,10 +154,10 @@ function Field({ id, label, type, placeholder, required }: {
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>{label}</label>
+      <label htmlFor={id} className="text-xs font-medium tracking-wide" style={{ color: "var(--muted)" }}>{label}</label>
       <input id={id} type={type} placeholder={placeholder} required={required}
         className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
-        style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }} />
+        style={{ background: "var(--surface2)", borderColor: "var(--border)", color: "var(--foreground)" }} />
     </div>
   );
 }
