@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { NumberTicker } from "@/components/magicui/number-ticker";
-import { ParticleCanvas } from "@/components/magicui/particle-canvas";
 import { IconArrowRight, IconMessageCircle } from "@/components/icons";
 import { useEffect, useState, useRef } from "react";
 
@@ -13,15 +12,15 @@ const stats = [
 
 const TERMINAL_LINES = [
   { prompt: "$ whoami", output: "> Marc Whitham — Principal Security Consultant" },
-  { prompt: "$ clearance --status", output: "> DV Active · Held since 2004 · Highest UK level" },
+  { prompt: "$ clearance --status", output: "> DV Active · Held since 2004" },
   { prompt: "$ specialisms --list", output: "> Secure by Design · NIST RMF · ISO 27001 · SOC Lead" },
   { prompt: "$ availability --check", output: "> Available Q2 2026 · SC/DV environments ✓" },
 ];
 
 const LINE_GAP = 400;
-const wordDelay  = () => 35 + Math.random() * 30;   // 35–65 ms per char (blue)
-const wordPause  = () => 160 + Math.random() * 190; // 160–350 ms between words (blue)
-const OUTPUT_MS  = 18;                               // ms per char (green, fast)
+const wordDelay  = () => 35 + Math.random() * 30;
+const wordPause  = () => 160 + Math.random() * 190;
+const OUTPUT_MS  = 18;
 
 interface TerminalLine {
   text: string;
@@ -58,7 +57,6 @@ function TerminalBlock() {
       for (const entry of TERMINAL_LINES) {
         if (cancelled) return;
 
-        // Blue prompt — word by word: type chars fast, pause between words
         const words = entry.prompt.split(" ");
         let built = "";
         for (let w = 0; w < words.length; w++) {
@@ -80,7 +78,6 @@ function TerminalBlock() {
         await delay(LINE_GAP);
         if (cancelled) return;
 
-        // Green output — fast, consistent
         for (let i = 1; i <= entry.output.length; i++) {
           if (cancelled) return;
           await delay(OUTPUT_MS);
@@ -95,7 +92,6 @@ function TerminalBlock() {
 
     typeAll();
 
-    // Blinking cursor interval
     const cursorInterval = setInterval(() => {
       setShowCursor((v) => !v);
     }, 530);
@@ -111,7 +107,7 @@ function TerminalBlock() {
       className="overflow-hidden font-mono text-xs"
       style={{ background: "#0b1120", border: "1px solid #1a2540" }}
     >
-      {/* Title bar */}
+      {/* Title bar — always dark (terminal aesthetic) */}
       <div
         className="flex items-center gap-2 px-3 py-2 border-b"
         style={{ borderColor: "#1a2540", background: "#0d1526" }}
@@ -158,92 +154,116 @@ function delay(ms: number): Promise<void> {
 }
 
 export function Hero() {
-  const leftColRef   = useRef<HTMLDivElement>(null);
-  const rightColRef  = useRef<HTMLDivElement>(null);
-  const terminalRef  = useRef<HTMLDivElement>(null);
-
   return (
     <div className="relative w-full overflow-hidden min-h-[calc(100vh-96px)]">
-      {/* Full-width canvas */}
-      <ParticleCanvas obstacles={[leftColRef, rightColRef, terminalRef]} />
+      {/* Static background image — desaturated */}
+      <Image
+        src="/hero-bg.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover object-center"
+        style={{ filter: "grayscale(1) brightness(0.18)", zIndex: 0 }}
+      />
+      {/* Subtle vignette overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 30%, var(--background) 100%)",
+          zIndex: 1,
+        }}
+      />
 
-      <section className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)]">
+      <section className="relative max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-96px)]" style={{ zIndex: 2 }}>
       {/* Left */}
-      <div ref={leftColRef} className="relative z-10 flex flex-col gap-6">
+      <div className="relative z-10 flex flex-col gap-6">
         <Image src="/logo.svg" alt="MW" width={56} height={56} className="mb-2" />
 
-        <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "#3b82f6" }}>
+        <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "var(--blue)" }}>
           // Principal Security Consultant · MoD Specialist
         </p>
 
-        <h1 className="font-mono font-bold leading-none"
-          style={{ fontSize: "clamp(3rem,6vw,5.5rem)", color: "#f1f5f9", letterSpacing: "-0.04em" }}>
+        <h1 className="font-bold leading-none"
+          style={{ fontFamily: "var(--font-sansita)", fontSize: "clamp(3rem,6vw,5.5rem)", color: "var(--foreground)", letterSpacing: "-0.01em" }}>
           Marc<br />
-          <span style={{ color: "#f59e0b" }}>Whitham</span>
+          <span>Whitham</span>
         </h1>
 
-        {/* Terminal block replacing TypingAnimation */}
-        <div ref={terminalRef} className="max-w-md">
+        {/* Terminal block */}
+        <div className="max-w-md">
           <TerminalBlock />
         </div>
 
         <div className="flex gap-3 flex-wrap">
           <a href="#experience"
             className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-            style={{ background: "#3b82f6" }}>
+            style={{ background: "var(--blue)" }}>
             View Experience
             <IconArrowRight size={15} />
           </a>
           <a href="#contact"
             className="flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5"
-            style={{ border: "1.5px solid #1a2540", color: "#f1f5f9" }}>
+            style={{ border: "1.5px solid var(--border)", color: "var(--foreground)" }}>
             <IconMessageCircle size={15} />
             Discuss a Project
           </a>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap text-sm" style={{ color: "#64748b" }}>
+        <div className="flex items-center gap-3 flex-wrap text-sm" style={{ color: "var(--muted)" }}>
           <span className="flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
             DV Cleared (Active)
           </span>
-          <span style={{ color: "#2d3f5a" }}>·</span>
+          <span style={{ color: "var(--dim)" }}>·</span>
           <span>Hampshire, UK</span>
-          <span style={{ color: "#2d3f5a" }}>·</span>
+          <span style={{ color: "var(--dim)" }}>·</span>
           <span>SC &amp; Above Environments</span>
         </div>
 
-        <div className="flex gap-8 pt-4 border-t" style={{ borderColor: "#1a2540" }}>
+        <div className="flex gap-8 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col gap-1">
-              <span className="font-mono font-bold text-2xl" style={{ color: "#f59e0b" }}>
+              <span className="font-mono font-bold text-2xl" style={{ color: "var(--gold)" }}>
                 <NumberTicker value={s.value} suffix={s.suffix} />
               </span>
-              <span className="text-xs" style={{ color: "#64748b" }}>{s.label}</span>
+              <span className="text-xs" style={{ color: "var(--muted)" }}>{s.label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Right */}
-      <div ref={rightColRef} className="relative z-10 hidden lg:flex flex-col gap-4">
+      <div className="relative z-10 hidden lg:flex flex-col gap-4">
+
+        {/* Profile photo */}
+        <div className="relative w-full overflow-hidden" style={{ border: "1px solid var(--border)", aspectRatio: "3 / 4", maxHeight: "420px" }}>
+          <Image
+            src="/marc.jpg"
+            alt="Marc Whitham"
+            fill
+            sizes="320px"
+            className="object-contain"
+            priority
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(6,8,16,0.6) 0%, transparent 50%)" }} />
+        </div>
 
         {/* Credential cards 2x2 — glassmorphism */}
         <div className="grid grid-cols-2 gap-4">
           {[
             {
               icon: <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z" />,
-              color: "#f59e0b", bg: "rgba(245,158,11,0.10)", border: "rgba(245,158,11,0.22)",
+              color: "var(--gold)", bg: "var(--gold-dim)", border: "var(--gold-border)",
               title: "DV Cleared", sub: "Active since 2004", badge: "Active · Continuous",
             },
             {
               icon: <><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></>,
-              color: "#3b82f6", bg: "rgba(59,130,246,0.10)", border: "rgba(59,130,246,0.22)",
+              color: "var(--blue)", bg: "var(--blue-dim)", border: "var(--blue-border)",
               title: "SbD Lead", sub: "MoD BETA Programme", badge: "Principal Architect",
             },
             {
               icon: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>,
-              color: "#8b5cf6", bg: "rgba(139,92,246,0.10)", border: "rgba(139,92,246,0.22)",
+              color: "var(--purple)", bg: "rgba(139,92,246,0.10)", border: "rgba(139,92,246,0.22)",
               title: "RN Veteran", sub: "27+ years service", badge: "Intelligence · EW · ITSO",
             },
             {
@@ -256,17 +276,17 @@ export function Hero() {
                   key={i}
                   className="p-4 border"
                   style={{
-                    background: "rgba(16,22,37,0.55)",
+                    background: "var(--glass)",
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
-                    borderColor: "rgba(59,130,246,0.15)",
+                    borderColor: "var(--border)",
                   }}
                 >
-                  <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "#2d3f5a" }}>Orgs served</p>
+                  <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--dim)" }}>Orgs served</p>
                   <div className="flex flex-wrap gap-1.5">
                     {["Royal Navy", "Fujitsu", "MoD", "Selborne", "HMNB Clyde"].map(o => (
                       <span key={o} className="text-xs px-2 py-0.5"
-                        style={{ background: "#162030", color: "#64748b", border: "1px solid #1a2540" }}>
+                        style={{ background: "var(--surface2)", color: "var(--muted)", border: "1px solid var(--border)" }}>
                         {o}
                       </span>
                     ))}
@@ -280,10 +300,10 @@ export function Hero() {
                 key={i}
                 className="p-4 border flex items-start gap-3"
                 style={{
-                  background: "rgba(16,22,37,0.55)",
+                  background: "var(--glass)",
                   backdropFilter: "blur(12px)",
                   WebkitBackdropFilter: "blur(12px)",
-                  borderColor: "rgba(59,130,246,0.15)",
+                  borderColor: "var(--border)",
                 }}
               >
                 <div className="w-9 h-9 flex items-center justify-center flex-shrink-0"
@@ -291,8 +311,8 @@ export function Hero() {
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{c.icon}</svg>
                 </div>
                 <div>
-                  <p className="font-mono font-semibold text-sm" style={{ color: "#f1f5f9" }}>{c.title}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>{c.sub}</p>
+                  <p className="font-mono font-semibold text-sm" style={{ color: "var(--foreground)" }}>{c.title}</p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{c.sub}</p>
                   <span className="inline-block mt-1.5 text-xs font-mono px-1.5 py-0.5"
                     style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}` }}>
                     {c.badge}
