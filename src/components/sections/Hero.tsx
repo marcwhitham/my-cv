@@ -176,8 +176,8 @@ export function Hero() {
           // Principal Security Consultant · MoD Specialist
         </p>
 
-        <h1 className="font-mono font-bold leading-none tracking-tight"
-          style={{ fontSize: "clamp(3rem,6vw,5.5rem)", color: "#f1f5f9" }}>
+        <h1 className="font-mono font-bold leading-none"
+          style={{ fontSize: "clamp(3rem,6vw,5.5rem)", color: "#f1f5f9", letterSpacing: "-0.04em" }}>
           Marc<br />
           <span style={{ color: "#f59e0b" }}>Whitham</span>
         </h1>
@@ -228,32 +228,13 @@ export function Hero() {
       {/* Right */}
       <div ref={rightColRef} className="relative z-10 hidden lg:flex flex-col gap-4">
 
-        {/* Photo */}
-        <div className="relative overflow-hidden border" style={{ borderColor: "#1a2540" }}>
-          <Image
-            src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=780&q=80"
-            alt="Secure server infrastructure"
-            width={780}
-            height={440}
-            className="w-full object-cover"
-            style={{ aspectRatio: "16/9", filter: "brightness(0.55) saturate(0.7)" }}
-            priority
-          />
-          <div className="absolute inset-0 flex items-end p-4">
-            <span className="font-mono text-xs px-2 py-1"
-              style={{ background: "rgba(6,8,16,0.75)", color: "#64748b", border: "1px solid #1a2540" }}>
-              // Defence-grade network infrastructure
-            </span>
-          </div>
-        </div>
-
         {/* Credential cards 2x2 — glassmorphism */}
         <div className="grid grid-cols-2 gap-4">
           {[
             {
               icon: <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z" />,
               color: "#f59e0b", bg: "rgba(245,158,11,0.10)", border: "rgba(245,158,11,0.22)",
-              title: "DV Cleared", sub: "Active since 2004", badge: "Highest UK clearance",
+              title: "DV Cleared", sub: "Active since 2004", badge: "Active · Continuous",
             },
             {
               icon: <><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></>,

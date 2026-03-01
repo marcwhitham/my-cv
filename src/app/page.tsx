@@ -10,6 +10,7 @@ import { ImpactBand } from "@/components/sections/ImpactBand";
 import { CertMarquee } from "@/components/sections/CertMarquee";
 import { FloatingContact } from "@/components/sections/FloatingContact";
 import { SkillFlowGraphic } from "@/components/sections/SkillFlowGraphic";
+import { FrameworksBand } from "@/components/sections/FrameworksBand";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <CertMarquee />
       <About />
       <ImpactBand />
+      <FrameworksBand />
       <SkillFlowGraphic />
       <Skills />
       <Qualifications />

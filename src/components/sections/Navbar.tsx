@@ -4,14 +4,14 @@ import Image from "next/image";
 import { IconDownload } from "@/components/icons";
 
 const links = [
-  { href: "#about",         label: "About" },
-  { href: "#experience",    label: "Experience" },
-  { href: "#skills",        label: "Skills" },
-  { href: "#qualifications",label: "Qualifications" },
-  { href: "#contact",       label: "Contact" },
+  { href: "#about",          label: "About" },
+  { href: "#skills",         label: "Skills" },
+  { href: "#qualifications", label: "Qualifications" },
+  { href: "#experience",     label: "Experience" },
+  { href: "#contact",        label: "Contact" },
 ];
 
-const sectionIds = ["about", "experience", "skills", "qualifications", "contact"];
+const sectionIds = ["about", "skills", "qualifications", "experience", "contact"];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);

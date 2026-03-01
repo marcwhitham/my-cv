@@ -1,43 +1,36 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 const skillBlocks = [
   {
     title: "Security Architecture & Design",
-    bars: [
-      { label: "Secure by Design (MoD / JSP 440)", pct: 97 },
-      { label: "Security Architecture (ISO 27001 / NIST)", pct: 95 },
-      { label: "Cloud Security (Azure / AWS)", pct: 85 },
-      { label: "Physical & Virtual Network Security", pct: 90 },
+    skills: [
+      "Secure by Design (MoD / JSP 440)",
+      "Security Architecture (ISO 27001 / NIST)",
+      "Cloud Security (Azure / AWS)",
+      "Physical & Virtual Network Security",
     ],
   },
   {
     title: "Risk & Compliance",
-    bars: [
-      { label: "Threat & Vulnerability Management", pct: 95 },
-      { label: "NIST CMF / RMF", pct: 93 },
-      { label: "MoD Accreditation (JSP440/604/453)", pct: 97 },
-      { label: "Information Asset Assurance", pct: 92 },
+    skills: [
+      "Threat & Vulnerability Management",
+      "NIST CMF / RMF",
+      "MoD Accreditation (JSP440/604/453)",
+      "Information Asset Assurance",
     ],
   },
   {
     title: "Leadership & Management",
-    bars: [
-      { label: "Team Leadership & Line Management", pct: 95 },
-      { label: "Stakeholder Engagement", pct: 90 },
-      { label: "Project Management", pct: 88 },
-      { label: "Mentorship & Training", pct: 93 },
+    skills: [
+      "Team Leadership & Line Management",
+      "Stakeholder Engagement",
+      "Project Management",
+      "Mentorship & Training",
     ],
   },
-];
-
-const frameworks = [
-  "JSP 440 / 453 / 604", "ISO 27001", "NIST 800 Series", "NIST CMF & RMF",
-  "NCSC Guidance", "STRAP", "SOC Operations", "Cyber Assurance Review Board",
-  "SQEP Workforce Management", "Defence CMI",
 ];
 
 const imageStrip = [
@@ -58,28 +51,6 @@ const imageStrip = [
   },
 ];
 
-function SkillBar({ label, pct }: { label: string; pct: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <div ref={ref}>
-      <div className="flex justify-between mb-1.5">
-        <span className="text-xs" style={{ color: "#64748b" }}>{label}</span>
-        <span className="font-mono text-xs" style={{ color: "#3b82f6" }}>{pct}%</span>
-      </div>
-      <div className="h-1 overflow-hidden" style={{ background: "#162030" }}>
-        <motion.div
-          className="h-full"
-          style={{ background: "#3b82f6" }}
-          initial={{ width: "0%" }}
-          animate={{ width: isInView ? `${pct}%` : "0%" }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function Skills() {
   return (
     <section id="skills" className="py-24" style={{ background: "#060810" }}>
@@ -89,7 +60,7 @@ export function Skills() {
           Technical &amp; Professional Expertise
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
           {skillBlocks.map((block, index) => (
             <motion.div
               key={block.title}
@@ -100,35 +71,20 @@ export function Skills() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: index * 0.1 }}
             >
-              <h3 className="font-mono font-semibold text-sm mb-5" style={{ color: "#f1f5f9" }}>{block.title}</h3>
-              <div className="space-y-3.5">
-                {block.bars.map((b) => (
-                  <SkillBar key={b.label} label={b.label} pct={b.pct} />
+              <h3 className="font-mono font-semibold text-sm mb-5" style={{ color: "#f1f5f9" }}>
+                {block.title}
+              </h3>
+              <ul className="space-y-3">
+                {block.skills.map((skill) => (
+                  <li key={skill} className="flex items-start gap-2">
+                    <span className="font-bold flex-shrink-0 mt-0.5" style={{ color: "#3b82f6", fontSize: "0.7rem" }}>›</span>
+                    <span className="text-sm leading-snug" style={{ color: "#64748b" }}>{skill}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </motion.div>
           ))}
         </div>
-
-        {/* Frameworks */}
-        <motion.div
-          className="border p-6 mb-5"
-          style={{ background: "#101625", borderColor: "#1a2540" }}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.45 }}
-        >
-          <h3 className="font-mono font-semibold text-sm mb-4" style={{ color: "#f1f5f9" }}>Standards &amp; Frameworks</h3>
-          <div className="flex flex-wrap gap-2">
-            {frameworks.map((f) => (
-              <span key={f} className="font-mono text-xs px-3 py-1.5 border"
-                style={{ background: "#162030", color: "#64748b", borderColor: "#1a2540" }}>
-                {f}
-              </span>
-            ))}
-          </div>
-        </motion.div>
 
         {/* Image strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -158,7 +114,6 @@ export function Skills() {
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );

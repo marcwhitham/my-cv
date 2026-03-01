@@ -81,7 +81,7 @@ export function Qualifications() {
               </svg>
               <div className="flex-1">
                 <p className="font-bold text-sm" style={{ color: "#f59e0b" }}>Developed Vetting (DV)</p>
-                <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>Held continuously since 2004 · Highest UK level · Defence Vetted</p>
+                <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>Held continuously since 2004 · Active · Defence Vetted</p>
               </div>
               <span className="font-mono text-xs px-2 py-0.5 shrink-0"
                 style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", border: "1px solid rgba(16,185,129,0.22)" }}>
