@@ -7,7 +7,7 @@ import { IconMail, IconPhone, IconLinkedIn, IconMapPin, IconSend } from "@/compo
 const contactRows = [
   { label: "Email",    value: "marcwhitham@outlook.com", href: "mailto:marcwhitham@outlook.com", Icon: IconMail    },
   { label: "Phone",    value: "07917 197537",            href: "tel:07917197537",               Icon: IconPhone   },
-  { label: "LinkedIn", value: "Marc Whitham",            href: "#",                             Icon: IconLinkedIn},
+  { label: "LinkedIn", value: "Marc Whitham",            href: undefined,                       Icon: IconLinkedIn},
   { label: "Location", value: "Hampshire, PO12",         href: undefined,                       Icon: IconMapPin  },
 ];
 

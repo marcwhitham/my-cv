@@ -18,17 +18,17 @@ export function NumberTicker({ value, suffix = "", className, delay = 0, duratio
 
   useEffect(() => {
     if (!isInView) return;
+    let controls: { stop: () => void } | null = null;
     const timeout = setTimeout(() => {
-      const controls = animate(mv, value, {
+      controls = animate(mv, value, {
         duration,
         ease: "linear",
         onUpdate: (v) => {
           if (ref.current) ref.current.textContent = Math.floor(v) + suffix;
         },
       });
-      return () => controls.stop();
     }, delay * 1000);
-    return () => clearTimeout(timeout);
+    return () => { clearTimeout(timeout); controls?.stop(); };
   }, [isInView, value, delay, duration, mv, suffix]);
 
   return <span ref={ref} className={cn("tabular-nums", className)}>0{suffix}</span>;

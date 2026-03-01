@@ -154,8 +154,12 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx    = canvas.getContext("2d")!;
+    const canvasMaybe = canvasRef.current;
+    if (!canvasMaybe) return;
+    const canvas = canvasMaybe as HTMLCanvasElement;
+    const ctxMaybe = canvas.getContext("2d");
+    if (!ctxMaybe) return;
+    const ctx = ctxMaybe as CanvasRenderingContext2D;
     let w=0, h=0, dpr=1, raf=0, frameN=0;
     let nodes: Node[] | null = null;
 

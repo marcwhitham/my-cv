@@ -30,16 +30,13 @@ export function FloatingContact() {
         pointerEvents: visible ? "auto" : "none",
       }}
     >
-      <a href="#contact">
-        <button
-          className="font-mono font-bold text-sm px-5 py-3 rounded-full"
-          style={{
-            background: "#f59e0b",
-            color: "#0b0f1a",
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: "6px", marginTop: "-2px" }} aria-hidden><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>Let&apos;s Talk
-        </button>
+      <a
+        href="#contact"
+        className="font-mono font-bold text-sm px-5 py-3 rounded-full inline-flex items-center gap-1.5"
+        style={{ background: "#f59e0b", color: "#0b0f1a" }}
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+        Let&apos;s Talk
       </a>
     </div>
   );

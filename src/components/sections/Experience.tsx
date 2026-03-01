@@ -98,7 +98,6 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
   return (
     <motion.div
       ref={ref}
-      key={i}
       className="relative mb-8 last:mb-0"
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
