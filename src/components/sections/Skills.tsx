@@ -84,7 +84,7 @@ export function Skills() {
   return (
     <section id="skills" className="py-24" style={{ background: "#060810" }}>
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>03 / Skills</p>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>04 / Skills</p>
         <h2 className="font-mono font-bold tracking-tight mb-12" style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}>
           Technical &amp; Professional Expertise
         </h2>

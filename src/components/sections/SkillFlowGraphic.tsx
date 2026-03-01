@@ -80,7 +80,7 @@ export function SkillFlowGraphic() {
           letterSpacing: "0.12em", textTransform: "uppercase",
           color: C.blue, marginBottom: "0.4rem",
         }}>
-          // Capability Intelligence Network
+          02 / Capability Network
         </p>
         <h2 style={{
           fontFamily: MONO, fontWeight: 700,

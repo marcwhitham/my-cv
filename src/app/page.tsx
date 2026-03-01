@@ -17,9 +17,9 @@ export default function Home() {
       <Navbar />
       <Hero />
       <CertMarquee />
-      <SkillFlowGraphic />
       <About />
       <ImpactBand />
+      <SkillFlowGraphic />
       <Experience />
       <Skills />
       <Qualifications />
