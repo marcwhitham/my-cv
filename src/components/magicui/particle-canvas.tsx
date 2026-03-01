@@ -10,6 +10,7 @@ interface Node {
   icon: IconType; ip: string; a: number;
   pulseR: number; pulseA: number; nextPulse: number;
   status: string | null; statusBorn: number;
+  dying: boolean;
 }
 interface Packet {
   ai: number; bi: number; t: number;
@@ -46,6 +47,7 @@ const C_BG     = "rgba(12,19,34,0.52)";
 const C_GREEN  = "#10b981";
 const C_RED    = "#ef4444";
 
+const ICON_TYPES: IconType[] = ["shield","lock","server","hub","eye","chip"];
 const ICONS: IconType[] = ["shield","lock","server","hub","eye","chip","shield","lock","eye"];
 const PAYLOADS = ["10110100","01101011","11001010","00110101","0xA3","0x4F","0xB2","0xE7","TTL:64","SEQ:8"];
 const ERR_TEXTS = ["TIMEOUT","PKT LOSS","CONN RESET","RTX:3","NO ROUTE"];
@@ -168,6 +170,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
     let cachedRects: DOMRect[] = [];
     let rectsDirty  = true;
     let nextMsgSpawn = 0;
+    let nextCycle    = 0;
 
     function refreshRects() {
       cachedRects = obstacles.map(ob => ob.current?.getBoundingClientRect()).filter((r): r is DOMRect => !!r);
@@ -184,15 +187,65 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       rectsDirty = true;
     }
 
-    function mkNode(icon: IconType): Node {
+    function mkNode(icon: IconType, ox?: number, oy?: number): Node {
       const ang = Math.random()*Math.PI*2, spd = 0.1+Math.random()*0.16;
       return {
-        x: NODE_R+Math.random()*(w-NODE_R*2), y: NODE_R+Math.random()*(h-NODE_R*2),
+        x: ox ?? NODE_R+Math.random()*(w-NODE_R*2),
+        y: oy ?? NODE_R+Math.random()*(h-NODE_R*2),
         vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd,
         icon, ip: makeIP(), a: 0,
         pulseR: 0, pulseA: 0, nextPulse: performance.now()+800+Math.random()*5000,
-        status: null, statusBorn: 0,
+        status: null, statusBorn: 0, dying: false,
       };
+    }
+
+    // Find the canvas position farthest from all live nodes
+    function findEmptySpot(ns: Node[]): { x: number; y: number } {
+      const alive = ns.filter(nd => !nd.dying);
+      let bx=NODE_R*2+Math.random()*(w-NODE_R*4), by=NODE_R*2+Math.random()*(h-NODE_R*4), bd=0;
+      for (let s=0; s<40; s++) {
+        const cx=NODE_R*2+Math.random()*(w-NODE_R*4), cy=NODE_R*2+Math.random()*(h-NODE_R*4);
+        let md=Infinity;
+        for (const nd of alive) { const d=Math.hypot(nd.x-cx,nd.y-cy); if (d<md) md=d; }
+        if (md>bd) { bd=md; bx=cx; by=cy; }
+      }
+      return { x: bx, y: by };
+    }
+
+    // Splice out fully-faded dying nodes and remap all index references
+    function purgeDead(ns: Node[]): Node[] {
+      const deadSet = new Set<number>();
+      for (let i=0; i<ns.length; i++) { if (ns[i].dying && ns[i].a<=0) deadSet.add(i); }
+      if (!deadSet.size) return ns;
+
+      const remap = new Map<number,number>();
+      let ni=0;
+      for (let i=0; i<ns.length; i++) { if (!deadSet.has(i)) remap.set(i,ni++); }
+
+      for (let p=packets.length-1; p>=0; p--) {
+        const pk=packets[p];
+        if (deadSet.has(pk.ai)||deadSet.has(pk.bi)) { packets.splice(p,1); continue; }
+        pk.ai=remap.get(pk.ai)!; pk.bi=remap.get(pk.bi)!;
+        pk.connKey=`${Math.min(pk.ai,pk.bi)}-${Math.max(pk.ai,pk.bi)}`;
+      }
+
+      const remapKey = (key: string) => {
+        const [a,b]=key.split('-').map(Number);
+        if (deadSet.has(a)||deadSet.has(b)) return null;
+        const na=remap.get(a)!, nb=remap.get(b)!;
+        return `${Math.min(na,nb)}-${Math.max(na,nb)}`;
+      };
+      const remapSet = (s: Set<string>) => {
+        const s2=new Set<string>(); for (const k of s) { const nk=remapKey(k); if(nk) s2.add(nk); }
+        s.clear(); s2.forEach(k=>s.add(k));
+      };
+      remapSet(liveConns); remapSet(estConns);
+
+      const newCool=new Map<string,number>();
+      for (const [k,v] of cooldowns) { const nk=remapKey(k); if(nk) newCool.set(nk,v); }
+      cooldowns.clear(); newCool.forEach((v,k)=>cooldowns.set(k,v));
+
+      return ns.filter((_,i)=>!deadSet.has(i));
     }
 
     function mkPkt(ai: number, bi: number, key: string, type: "syn"|"ack"|"data"): Packet {
@@ -207,8 +260,9 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
 
     function frame(now: number) {
       if (!nodes) {
-        nodes = ICONS.map(mkNode);
+        nodes = ICONS.map(icon => mkNode(icon));
         nextMsgSpawn = now + 4000 + Math.random()*4000;
+        nextCycle    = now + 5000;
       }
       frameN++;
       ctx.clearRect(0,0,w,h);
@@ -216,9 +270,21 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       if (rectsDirty || frameN%120===0) refreshRects();
       const cRect = canvas.getBoundingClientRect();
 
+      // ── node lifecycle (add 1, queue 1 to die, every 5 s) ───────────────────
+      if (now >= nextCycle) {
+        const alive = nodes.map((nd,i)=>i).filter(i=>!nodes![i].dying);
+        if (alive.length > 1) {
+          nodes[alive[0|Math.random()*alive.length]].dying = true;
+          const pos = findEmptySpot(nodes);
+          nodes.push(mkNode(pick(ICON_TYPES), pos.x, pos.y));
+        }
+        nextCycle = now + 5000;
+      }
+
       // ── repulsion ───────────────────────────────────────────────────────────
       for (let i=0; i<nodes.length; i++) {
         for (let j=i+1; j<nodes.length; j++) {
+          if (nodes[i].dying || nodes[j].dying) continue;
           const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y, d=Math.hypot(dx,dy);
           if (d<REPEL_R && d>0.001) {
             const f=REPEL_STR*(REPEL_R/d-1), fx=dx/d*f, fy=dy/d*f;
@@ -237,9 +303,10 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
         if (nd.y<NODE_R+4)   { nd.y=NODE_R+4;   nd.vy= Math.abs(nd.vy); }
         if (nd.y>h-NODE_R-4) { nd.y=h-NODE_R-4; nd.vy=-Math.abs(nd.vy); }
         for (const r of cachedRects) collideRect(nd,r,cRect);
-        if (now>=nd.nextPulse) { nd.pulseR=NODE_R; nd.pulseA=0.45; nd.nextPulse=now+5000+Math.random()*6000; }
+        if (!nd.dying && now>=nd.nextPulse) { nd.pulseR=NODE_R; nd.pulseA=0.45; nd.nextPulse=now+5000+Math.random()*6000; }
         if (nd.pulseA>0) { nd.pulseR+=0.5; nd.pulseA=Math.max(0,nd.pulseA-0.006); }
-        if (nd.a<1) nd.a=Math.min(1,nd.a+0.025);
+        if (nd.dying) { nd.a=Math.max(0,nd.a-0.02); }
+        else if (nd.a<1) { nd.a=Math.min(1,nd.a+0.025); }
       }
 
       // ── connections ─────────────────────────────────────────────────────────
@@ -248,6 +315,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       for (let i=0; i<nodes.length; i++) {
         for (let j=i+1; j<nodes.length; j++) {
           const ni=nodes[i], nj=nodes[j];
+          if (ni.dying || nj.dying) continue;
           const dist=Math.hypot(nj.x-ni.x,nj.y-ni.y);
           if (dist>=MAX_DIST) continue;
           if (cachedRects.some(r=>segBlocked(ni.x,ni.y,nj.x,nj.y,r,cRect))) continue;
@@ -437,7 +505,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
             ctx.fillText(nd.status,nd.x,nd.y-NODE_R-8);
             ctx.restore();
           }
-        } else if (!connectedNodes.has(ndIdx) && nd.a>0.5) {
+        } else if (!connectedNodes.has(ndIdx) && nd.a>0.5 && !nd.dying) {
           // no connections — show searching
           const blink=Math.sin(now/600)>0;
           ctx.save(); ctx.globalAlpha=(blink?0.55:0.3)*nd.a;
@@ -448,6 +516,9 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
           ctx.restore();
         }
       }
+
+      // ── purge fully-faded dying nodes, remap index references ────────────────
+      nodes = purgeDead(nodes);
 
       raf=requestAnimationFrame(frame);
     }
@@ -462,6 +533,7 @@ export function ParticleCanvas({ obstacles = [] }: { obstacles?: ObstacleRef[] }
       resize();
       nodes=null; packets.length=0; drops.length=0; msgs.length=0;
       liveConns.clear(); estConns.clear(); cooldowns.clear();
+      nextCycle=0;
     };
     window.addEventListener("resize", onResize);
 
