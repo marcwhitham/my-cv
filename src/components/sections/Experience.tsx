@@ -106,7 +106,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
       {/* dot — centered on the border-l line */}
       {isCurrentRole ? (
         <motion.div
-          className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 rounded-full border-2"
+          className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 border-2"
           style={{
             background: r.accent,
             borderColor: "#0b0f1a",
@@ -127,7 +127,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
         />
       ) : (
         <div
-          className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 rounded-full border-2"
+          className="absolute -left-8 -translate-x-1/2 top-5 w-3.5 h-3.5 border-2"
           style={{
             background: r.accent,
             borderColor: "#0b0f1a",
@@ -137,7 +137,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
       )}
 
       <div
-        className="rounded-xl border p-6 transition-colors duration-200"
+        className="border p-6 transition-colors duration-200"
         style={{ background: "#101625", borderColor: "#1a2540" }}
         onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = r.accent + "55")}
         onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = "#1a2540")}
@@ -150,7 +150,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
             </p>
           </div>
           <span
-            className="font-mono text-xs px-3 py-1 rounded shrink-0"
+            className="font-mono text-xs px-3 py-1 shrink-0"
             style={{ background: r.accentDim, color: r.accent, border: `1px solid ${r.accentBorder}` }}
           >
             {r.date}
@@ -170,7 +170,7 @@ function TimelineItem({ r, i }: { r: typeof roles[number]; i: number }) {
           {r.tags.map(t => (
             <span
               key={t}
-              className="font-mono text-xs px-2 py-0.5 rounded"
+              className="font-mono text-xs px-2 py-0.5"
               style={{ background: "rgba(139,92,246,0.08)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.18)" }}
             >
               {t}

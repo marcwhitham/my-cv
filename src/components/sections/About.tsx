@@ -35,7 +35,7 @@ export function About() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0 }}
           >
-            <div className="rounded-xl overflow-hidden border sticky top-24" style={{ borderColor: "#1a2540" }}>
+            <div className="overflow-hidden border sticky top-24" style={{ borderColor: "#1a2540" }}>
               <Image
                 src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=560&q=80"
                 alt="Cybersecurity network visualization"
@@ -46,7 +46,7 @@ export function About() {
               />
               <div className="p-4 border-t" style={{ borderColor: "#1a2540", background: "#101625" }}>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse flex-shrink-0" />
+                  <span className="w-2 h-2 bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse flex-shrink-0" />
                   <span className="font-mono text-xs font-semibold" style={{ color: "#10b981" }}>Available Q2 2026</span>
                 </div>
               </div>
@@ -95,7 +95,7 @@ export function About() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="rounded-xl border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            <div className="border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Contact</h3>
               <div className="space-y-3">
                 {contactRows.map(({ label, value, href, Icon }) => (
@@ -109,11 +109,11 @@ export function About() {
               </div>
             </div>
 
-            <div className="rounded-xl border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            <div className="border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Core Specialisms</h3>
               <div className="flex flex-wrap gap-1.5">
                 {specialisms.map((s) => (
-                  <span key={s} className="text-xs px-2.5 py-1 rounded-md border"
+                  <span key={s} className="text-xs px-2.5 py-1 border"
                     style={{ background: "#162030", color: "#64748b", borderColor: "#1a2540" }}>
                     {s}
                   </span>

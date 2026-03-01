@@ -29,7 +29,18 @@
   --purple:      #8b5cf6;
   --red:         #ef4444;
 
-  --radius:      0.5rem;
+  --radius:      0px;
+}
+
+/* Zero out Tailwind's border-radius scale — sharp corners throughout */
+@theme inline {
+  --radius-sm:   0px;
+  --radius:      0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-xl:   0px;
+  --radius-2xl:  0px;
+  --radius-3xl:  0px;
 }
 
 @layer base {
@@ -52,5 +63,5 @@
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--background); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
 }

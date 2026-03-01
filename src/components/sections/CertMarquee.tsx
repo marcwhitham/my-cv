@@ -50,7 +50,7 @@ export function CertMarquee() {
           {[...certs, ...certs].map((cert, i) => (
             <span
               key={i}
-              className="font-mono text-xs px-3 py-1.5 rounded-lg border whitespace-nowrap"
+              className="font-mono text-xs px-3 py-1.5 border whitespace-nowrap"
               style={{
                 background: "#162030",
                 color: "#64748b",

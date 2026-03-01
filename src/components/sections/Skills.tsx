@@ -67,9 +67,9 @@ function SkillBar({ label, pct }: { label: string; pct: number }) {
         <span className="text-xs" style={{ color: "#64748b" }}>{label}</span>
         <span className="font-mono text-xs" style={{ color: "#3b82f6" }}>{pct}%</span>
       </div>
-      <div className="h-1 rounded-full overflow-hidden" style={{ background: "#162030" }}>
+      <div className="h-1 overflow-hidden" style={{ background: "#162030" }}>
         <motion.div
-          className="h-full rounded-full"
+          className="h-full"
           style={{ background: "#3b82f6" }}
           initial={{ width: "0%" }}
           animate={{ width: isInView ? `${pct}%` : "0%" }}
@@ -93,7 +93,7 @@ export function Skills() {
           {skillBlocks.map((block, index) => (
             <motion.div
               key={block.title}
-              className="rounded-xl border p-6"
+              className="border p-6"
               style={{ background: "#101625", borderColor: "#1a2540" }}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +112,7 @@ export function Skills() {
 
         {/* Frameworks */}
         <motion.div
-          className="rounded-xl border p-6 mb-5"
+          className="border p-6 mb-5"
           style={{ background: "#101625", borderColor: "#1a2540" }}
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export function Skills() {
           <h3 className="font-mono font-semibold text-sm mb-4" style={{ color: "#f1f5f9" }}>Standards &amp; Frameworks</h3>
           <div className="flex flex-wrap gap-2">
             {frameworks.map((f) => (
-              <span key={f} className="font-mono text-xs px-3 py-1.5 rounded-lg border"
+              <span key={f} className="font-mono text-xs px-3 py-1.5 border"
                 style={{ background: "#162030", color: "#64748b", borderColor: "#1a2540" }}>
                 {f}
               </span>
@@ -135,7 +135,7 @@ export function Skills() {
           {imageStrip.map(({ src, alt, caption }, index) => (
             <motion.div
               key={caption}
-              className="relative rounded-xl overflow-hidden border"
+              className="relative overflow-hidden border"
               style={{ borderColor: "#1a2540" }}
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}

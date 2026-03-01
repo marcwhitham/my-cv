@@ -108,7 +108,7 @@ function TerminalBlock() {
 
   return (
     <div
-      className="rounded-xl overflow-hidden font-mono text-xs"
+      className="overflow-hidden font-mono text-xs"
       style={{ background: "#0b1120", border: "1px solid #1a2540" }}
     >
       {/* Title bar */}
@@ -116,9 +116,9 @@ function TerminalBlock() {
         className="flex items-center gap-2 px-3 py-2 border-b"
         style={{ borderColor: "#1a2540", background: "#0d1526" }}
       >
-        <span className="w-3 h-3 rounded-full" style={{ background: "#ef4444" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#10b981" }} />
+        <span className="w-3 h-3" style={{ background: "#ef4444" }} />
+        <span className="w-3 h-3" style={{ background: "#f59e0b" }} />
+        <span className="w-3 h-3" style={{ background: "#10b981" }} />
         <span className="ml-2" style={{ color: "#2d3f5a" }}>// terminal</span>
       </div>
 
@@ -189,13 +189,13 @@ export function Hero() {
 
         <div className="flex gap-3 flex-wrap">
           <a href="#experience"
-            className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             style={{ background: "#3b82f6" }}>
             View Experience
             <IconArrowRight size={15} />
           </a>
           <a href="#contact"
-            className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold transition-transform hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-transform hover:-translate-y-0.5"
             style={{ border: "1.5px solid #1a2540", color: "#f1f5f9" }}>
             <IconMessageCircle size={15} />
             Discuss a Project
@@ -204,7 +204,7 @@ export function Hero() {
 
         <div className="flex items-center gap-3 flex-wrap text-sm" style={{ color: "#64748b" }}>
           <span className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
+            <span className="w-2 h-2 bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
             DV Cleared (Active)
           </span>
           <span style={{ color: "#2d3f5a" }}>·</span>
@@ -229,7 +229,7 @@ export function Hero() {
       <div ref={rightColRef} className="relative z-10 hidden lg:flex flex-col gap-4">
 
         {/* Photo */}
-        <div className="relative rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>
+        <div className="relative overflow-hidden border" style={{ borderColor: "#1a2540" }}>
           <Image
             src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=780&q=80"
             alt="Secure server infrastructure"
@@ -240,7 +240,7 @@ export function Hero() {
             priority
           />
           <div className="absolute inset-0 flex items-end p-4">
-            <span className="font-mono text-xs px-2 py-1 rounded"
+            <span className="font-mono text-xs px-2 py-1"
               style={{ background: "rgba(6,8,16,0.75)", color: "#64748b", border: "1px solid #1a2540" }}>
               // Defence-grade network infrastructure
             </span>
@@ -273,7 +273,7 @@ export function Hero() {
               return (
                 <div
                   key={i}
-                  className="rounded-xl p-4 border"
+                  className="p-4 border"
                   style={{
                     background: "rgba(16,22,37,0.55)",
                     backdropFilter: "blur(12px)",
@@ -284,7 +284,7 @@ export function Hero() {
                   <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "#2d3f5a" }}>Orgs served</p>
                   <div className="flex flex-wrap gap-1.5">
                     {["Royal Navy", "Fujitsu", "MoD", "Selborne", "HMNB Clyde"].map(o => (
-                      <span key={o} className="text-xs px-2 py-0.5 rounded"
+                      <span key={o} className="text-xs px-2 py-0.5"
                         style={{ background: "#162030", color: "#64748b", border: "1px solid #1a2540" }}>
                         {o}
                       </span>
@@ -297,7 +297,7 @@ export function Hero() {
             return (
               <div
                 key={i}
-                className="rounded-xl p-4 border flex items-start gap-3"
+                className="p-4 border flex items-start gap-3"
                 style={{
                   background: "rgba(16,22,37,0.55)",
                   backdropFilter: "blur(12px)",
@@ -305,14 +305,14 @@ export function Hero() {
                   borderColor: "rgba(59,130,246,0.15)",
                 }}
               >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                <div className="w-9 h-9 flex items-center justify-center flex-shrink-0"
                   style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.color }}>
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{c.icon}</svg>
                 </div>
                 <div>
                   <p className="font-mono font-semibold text-sm" style={{ color: "#f1f5f9" }}>{c.title}</p>
                   <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>{c.sub}</p>
-                  <span className="inline-block mt-1.5 text-xs font-mono px-1.5 py-0.5 rounded"
+                  <span className="inline-block mt-1.5 text-xs font-mono px-1.5 py-0.5"
                     style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}` }}>
                     {c.badge}
                   </span>

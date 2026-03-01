@@ -43,7 +43,7 @@ export function Contact() {
             </p>
 
             {/* Contact image */}
-            <div className="rounded-xl overflow-hidden border" style={{ borderColor: "#1a2540" }}>
+            <div className="overflow-hidden border" style={{ borderColor: "#1a2540" }}>
               <Image
                 src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=560&q=75"
                 alt="Global network connections"
@@ -55,7 +55,7 @@ export function Contact() {
             </div>
 
             {/* Contact details with icons */}
-            <div className="rounded-xl border p-5 space-y-3.5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            <div className="border p-5 space-y-3.5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               {contactRows.map(({ label, value, href, Icon }, index) => (
                 <motion.div
                   key={label}
@@ -65,7 +65,7 @@ export function Contact() {
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.45, delay: index * 0.06 }}
                 >
-                  <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+                  <div className="w-7 h-7 flex items-center justify-center flex-shrink-0"
                     style={{ background: "#162030", color: "#3b82f6", border: "1px solid #1a2540" }}>
                     <Icon size={13} />
                   </div>
@@ -79,9 +79,9 @@ export function Contact() {
               ))}
             </div>
 
-            <div className="rounded-xl border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
+            <div className="border p-5" style={{ background: "#101625", borderColor: "#1a2540" }}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
+                <span className="w-2 h-2 bg-emerald-500 shadow-[0_0_6px_#10b981] animate-pulse" />
                 <span className="font-mono text-xs font-semibold" style={{ color: "#10b981" }}>Available Q2 2026</span>
               </div>
               <p className="text-xs" style={{ color: "#64748b" }}>
@@ -94,7 +94,7 @@ export function Contact() {
           {/* Form */}
           <motion.form
             onSubmit={handleSubmit}
-            className="lg:col-span-3 rounded-xl border p-8 flex flex-col gap-5"
+            className="lg:col-span-3 border p-8 flex flex-col gap-5"
             style={{ background: "#101625", borderColor: "#1a2540" }}
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -109,7 +109,7 @@ export function Contact() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="ftype" className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>Engagement type</label>
-              <select id="ftype" className="rounded-lg px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
+              <select id="ftype" className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
                 style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }}>
                 <option value="">Select…</option>
                 <option>Secure by Design Architecture</option>
@@ -125,19 +125,19 @@ export function Contact() {
             <div className="flex flex-col gap-1.5">
               <label htmlFor="fmsg" className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>Message</label>
               <textarea id="fmsg" rows={5} required placeholder="Outline the engagement or opportunity…"
-                className="rounded-lg px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors resize-vertical"
+                className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors resize-vertical"
                 style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }} />
             </div>
 
             <button type="submit"
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-bold transition-transform hover:-translate-y-0.5"
+              className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold transition-transform hover:-translate-y-0.5"
               style={{ background: "#3b82f6", color: "#fff" }}>
               Send Message
               <IconSend size={15} />
             </button>
 
             {status === "ok" && (
-              <p className="text-center text-sm rounded-lg py-2 px-4"
+              <p className="text-center text-sm py-2 px-4"
                 style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", border: "1px solid rgba(16,185,129,0.20)" }}>
                 Message sent — I&apos;ll be in touch shortly.
               </p>
@@ -156,7 +156,7 @@ function Field({ id, label, type, placeholder, required }: {
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-xs font-medium tracking-wide" style={{ color: "#64748b" }}>{label}</label>
       <input id={id} type={type} placeholder={placeholder} required={required}
-        className="rounded-lg px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
+        className="px-4 py-3 text-sm outline-none border focus:border-blue-500 transition-colors"
         style={{ background: "#162030", borderColor: "#1a2540", color: "#f1f5f9" }} />
     </div>
   );

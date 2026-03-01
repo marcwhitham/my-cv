@@ -81,7 +81,7 @@ export function Navbar() {
             })}
           </ul>
           <a href="/marc-whitham-cv.pdf" download
-            className="flex items-center gap-2 text-sm font-bold px-5 py-2 rounded-full transition-transform hover:-translate-y-px"
+            className="flex items-center gap-2 text-sm font-bold px-5 py-2 transition-transform hover:-translate-y-px"
             style={{ background: "#f59e0b", color: "#000" }}>
             <IconDownload size={14} />
             Download CV

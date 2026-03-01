@@ -9,6 +9,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ImpactBand } from "@/components/sections/ImpactBand";
 import { CertMarquee } from "@/components/sections/CertMarquee";
 import { FloatingContact } from "@/components/sections/FloatingContact";
+import { SkillFlowGraphic } from "@/components/sections/SkillFlowGraphic";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <CertMarquee />
+      <SkillFlowGraphic />
       <About />
       <ImpactBand />
       <Experience />

@@ -25,14 +25,14 @@ export function Qualifications() {
           {certs.map((c, index) => (
             <motion.div
               key={c.abbr}
-              className="rounded-xl border p-4 flex items-start gap-3 transition-transform duration-200 hover:-translate-y-0.5"
+              className="border p-4 flex items-start gap-3 transition-transform duration-200 hover:-translate-y-0.5"
               style={{ background: "#101625", borderColor: "#1a2540" }}
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: index * 0.07 }}
             >
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center text-xs font-mono font-bold flex-shrink-0 text-center leading-tight"
+              <div className="w-12 h-12 flex items-center justify-center text-xs font-mono font-bold flex-shrink-0 text-center leading-tight"
                 style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}` }}>
                 {c.abbr}
               </div>
@@ -48,7 +48,7 @@ export function Qualifications() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Education */}
           <motion.div
-            className="rounded-xl border p-6"
+            className="border p-6"
             style={{ background: "#101625", borderColor: "#1a2540" }}
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +58,7 @@ export function Qualifications() {
             <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Education</h3>
             <h4 className="font-mono font-semibold text-base mb-1" style={{ color: "#f1f5f9" }}>BSc (Hons) Security &amp; Intelligence</h4>
             <p className="text-sm mb-3" style={{ color: "#64748b" }}>University — First / Upper Second Class</p>
-            <span className="font-mono text-xs px-2 py-1 rounded"
+            <span className="font-mono text-xs px-2 py-1"
               style={{ background: "rgba(139,92,246,0.08)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.18)" }}>
               Defence CMI Leadership &amp; Management
             </span>
@@ -66,7 +66,7 @@ export function Qualifications() {
 
           {/* Clearance */}
           <motion.div
-            className="rounded-xl border p-6"
+            className="border p-6"
             style={{ background: "#101625", borderColor: "#1a2540" }}
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -74,7 +74,7 @@ export function Qualifications() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <h3 className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>Security Clearances</h3>
-            <div className="rounded-lg p-4 flex items-center gap-4 mb-3"
+            <div className="p-4 flex items-center gap-4 mb-3"
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.22)" }}>
               <svg className="w-9 h-9 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
                 <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z" />
@@ -83,7 +83,7 @@ export function Qualifications() {
                 <p className="font-bold text-sm" style={{ color: "#f59e0b" }}>Developed Vetting (DV)</p>
                 <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>Held continuously since 2004 · Highest UK level · Defence Vetted</p>
               </div>
-              <span className="font-mono text-xs px-2 py-0.5 rounded shrink-0"
+              <span className="font-mono text-xs px-2 py-0.5 shrink-0"
                 style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", border: "1px solid rgba(16,185,129,0.22)" }}>
                 Active
               </span>
