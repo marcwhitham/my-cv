@@ -20,9 +20,9 @@ export default function Home() {
       <About />
       <ImpactBand />
       <SkillFlowGraphic />
-      <Experience />
       <Skills />
       <Qualifications />
+      <Experience />
       <Contact />
       <Footer />
       <FloatingContact />

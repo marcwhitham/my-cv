@@ -186,7 +186,7 @@ export function Experience() {
   return (
     <section id="experience" className="py-24" style={{ background: "#0b0f1a" }}>
       <div className="max-w-6xl mx-auto px-6">
-        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>03 / Experience</p>
+        <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: "#3b82f6" }}>05 / Experience</p>
         <h2
           className="font-mono font-bold tracking-tight mb-12"
           style={{ fontSize: "clamp(1.8rem,3vw,2.5rem)", color: "#f1f5f9" }}
